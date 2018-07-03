@@ -41,8 +41,51 @@ public class SoundSourceTranslationControllerEditor : Editor {
 			controller.PositionSoundSource(controller.back.position);
 		}
 
+
+
+
+
 		// Translations all
-		
+		GUILayout.Label("\nTransition to:");	
+		if (GUILayout.Button("LF")) {
+			controller.StartTranslateSoundSource(controller.leftFront.position);
+		}		
+		if (GUILayout.Button("RF")) {
+			controller.StartTranslateSoundSource(controller.rightFront.position);
+		}	
+		if (GUILayout.Button("LB")) {
+			controller.StartTranslateSoundSource(controller.leftBack.position);
+		}	
+		if (GUILayout.Button("RB")) {
+			controller.StartTranslateSoundSource(controller.rightBack.position);
+		}
+		if (GUILayout.Button("C")) {
+			controller.StartTranslateSoundSource(controller.center.position);
+		}
+
+		if (GUILayout.Button("L")) {
+			controller.StartTranslateSoundSource(controller.left.position);
+		}		
+		if (GUILayout.Button("R")) {
+			controller.StartTranslateSoundSource(controller.right.position);
+		}	
+		if (GUILayout.Button("F")) {
+			controller.StartTranslateSoundSource(controller.front.position);
+		}	
+		if (GUILayout.Button("B")) {
+			controller.StartTranslateSoundSource(controller.back.position);
+		}
+
+
+
+		// Stop
+		GUILayout.Label("\nStop:");
+		if (GUILayout.Button("Stop Translation")) {
+			controller.StopTranslation();
+		}
+
+
+
 
 		// Translation Test Cases
 		GUILayout.Label("\nTranslate From-To (Test cases):");	
@@ -100,10 +143,6 @@ public class SoundSourceTranslationControllerEditor : Editor {
 			controller.StartTranslateSoundSource(controller.rightFront.position, controller.rightBack.position);
 		}
 
-		// Stop
-		GUILayout.Label("\nStop:");
-		if (GUILayout.Button("Stop Translation")) {
-			controller.StopTranslation();
-		}
+		
 	}
 }

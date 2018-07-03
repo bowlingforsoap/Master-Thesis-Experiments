@@ -657,7 +657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soundSource: {fileID: 2134035063}
-  soundSourceSpeed: 3
+  soundSourceSpeed: 20
   center: {fileID: 1903891959}
   leftFront: {fileID: 328131675}
   rightFront: {fileID: 319840527}
@@ -871,7 +871,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: 248799cb4acba48f7b3ee842a80f788c,
     type: 2}
-  m_audioClip: {fileID: 8300000, guid: 3412ed976d592514a9b0ecdd0cf6f7d3, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 900a316507d3a234fbc783876e8a0c9d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
