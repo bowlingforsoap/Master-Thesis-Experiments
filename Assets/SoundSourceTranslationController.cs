@@ -34,6 +34,8 @@ public class SoundSourceTranslationController : MonoBehaviour {
 			PositionSoundSource(from);
 		}
 
+		PlaySound();
+
 		while(Vector3.Distance(from.position, to.position) > Vector3.Distance(from.position, soundSource.transform.position)) {
 			soundSource.transform.position += direction * soundSourceSpeed * Time.deltaTime;
 			yield return null;
@@ -41,7 +43,17 @@ public class SoundSourceTranslationController : MonoBehaviour {
 
 		soundSource.transform.position = to.position;
 
+		StopSound();
+
 		currentCoroutine = null;
 		Debug.Log("Finished TranslateSoundSource");
+	}
+
+	private void PlaySound() {
+		soundSource.GetComponent<AudioSource>().Play();
+	}
+
+	private void StopSound() {
+		soundSource.GetComponent<AudioSource>().Stop();
 	}
 }
