@@ -13,75 +13,91 @@ public class SoundSourceTranslationControllerEditor : Editor {
 		// Positioning
 		GUILayout.Label("\nPosition at:");	
 		if (GUILayout.Button("LF")) {
-			controller.PositionSoundSource(controller.leftFront);
+			controller.PositionSoundSource(controller.leftFront.position);
 		}		
 		if (GUILayout.Button("RF")) {
-			controller.PositionSoundSource(controller.rightFront);
+			controller.PositionSoundSource(controller.rightFront.position);
 		}	
 		if (GUILayout.Button("LB")) {
-			controller.PositionSoundSource(controller.leftBack);
+			controller.PositionSoundSource(controller.leftBack.position);
 		}	
 		if (GUILayout.Button("RB")) {
-			controller.PositionSoundSource(controller.rightBack);
+			controller.PositionSoundSource(controller.rightBack.position);
 		}
 		if (GUILayout.Button("C")) {
-			controller.PositionSoundSource(controller.center);
+			controller.PositionSoundSource(controller.center.position);
 		}
 
-		// Translations
-		GUILayout.Label("\nTranslate From-To:");	
+		if (GUILayout.Button("L")) {
+			controller.PositionSoundSource(controller.left.position);
+		}		
+		if (GUILayout.Button("R")) {
+			controller.PositionSoundSource(controller.right.position);
+		}	
+		if (GUILayout.Button("F")) {
+			controller.PositionSoundSource(controller.front.position);
+		}	
+		if (GUILayout.Button("B")) {
+			controller.PositionSoundSource(controller.back.position);
+		}
+
+		// Translations all
+		
+
+		// Translation Test Cases
+		GUILayout.Label("\nTranslate From-To (Test cases):");	
 		if (GUILayout.Button("C-RF")) {
-			controller.StartTranslateSoundSource(controller.center, controller.rightFront);
+			controller.StartTranslateSoundSource(controller.center.position, controller.rightFront.position);
 		}
 		if (GUILayout.Button("RF-C")) {
-			controller.StartTranslateSoundSource(controller.rightFront, controller.center);
+			controller.StartTranslateSoundSource(controller.rightFront.position, controller.center.position);
 		}
 		if (GUILayout.Button("C-LF")) {
-			controller.StartTranslateSoundSource(controller.center, controller.leftFront);
+			controller.StartTranslateSoundSource(controller.center.position, controller.leftFront.position);
 		}
 		if (GUILayout.Button("LF-C")) {
-			controller.StartTranslateSoundSource(controller.leftFront, controller.center);
+			controller.StartTranslateSoundSource(controller.leftFront.position, controller.center.position);
 		}
 
 		if (GUILayout.Button("C-RB")) {
-			controller.StartTranslateSoundSource(controller.center, controller.rightBack);
+			controller.StartTranslateSoundSource(controller.center.position, controller.rightBack.position);
 		}
 		if (GUILayout.Button("RB-C")) {
-			controller.StartTranslateSoundSource(controller.rightBack, controller.center);
+			controller.StartTranslateSoundSource(controller.rightBack.position, controller.center.position);
 		}
 		if (GUILayout.Button("C-LB")) {
-			controller.StartTranslateSoundSource(controller.center, controller.leftBack);
+			controller.StartTranslateSoundSource(controller.center.position, controller.leftBack.position);
 		}
 		if (GUILayout.Button("LB-C")) {
-			controller.StartTranslateSoundSource(controller.leftBack, controller.center);
+			controller.StartTranslateSoundSource(controller.leftBack.position, controller.center.position);
 		}
 
 		if (GUILayout.Button("RF-LF")) {
-			controller.StartTranslateSoundSource(controller.rightFront, controller.leftFront);
+			controller.StartTranslateSoundSource(controller.rightFront.position, controller.leftFront.position);
 		}
 		if (GUILayout.Button("LF-RF")) {
-			controller.StartTranslateSoundSource(controller.leftFront, controller.rightFront);
+			controller.StartTranslateSoundSource(controller.leftFront.position, controller.rightFront.position);
 		}
 
 		if (GUILayout.Button("LF-LB")) {
-			controller.StartTranslateSoundSource(controller.leftFront, controller.leftBack);
+			controller.StartTranslateSoundSource(controller.leftFront.position, controller.leftBack.position);
 		}
 		if (GUILayout.Button("LB-LF")) {
-			controller.StartTranslateSoundSource(controller.leftBack, controller.leftFront);
+			controller.StartTranslateSoundSource(controller.leftBack.position, controller.leftFront.position);
 		}
 
 		if (GUILayout.Button("LB-RB")) {
-			controller.StartTranslateSoundSource(controller.leftBack, controller.rightBack);
+			controller.StartTranslateSoundSource(controller.leftBack.position, controller.rightBack.position);
 		}
 		if (GUILayout.Button("RB-LB")) {
-			controller.StartTranslateSoundSource(controller.rightBack, controller.leftBack);
+			controller.StartTranslateSoundSource(controller.rightBack.position, controller.leftBack.position);
 		}
 
 		if (GUILayout.Button("RB-RF")) {
-			controller.StartTranslateSoundSource(controller.rightBack, controller.rightFront);
+			controller.StartTranslateSoundSource(controller.rightBack.position, controller.rightFront.position);
 		}
 		if (GUILayout.Button("RF-RB")) {
-			controller.StartTranslateSoundSource(controller.rightFront, controller.rightBack);
+			controller.StartTranslateSoundSource(controller.rightFront.position, controller.rightBack.position);
 		}
 
 		// Stop
