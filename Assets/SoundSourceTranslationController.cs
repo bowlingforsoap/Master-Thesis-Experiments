@@ -22,6 +22,8 @@ public class SoundSourceTranslationController : MonoBehaviour {
 	public void StopTranslation() {
 		if (currentCoroutine != null) {
 			StopCoroutine(currentCoroutine);
+			
+			StopSound();
 		}
 	}
 
