@@ -11,13 +11,21 @@ public class PlaceTestPoints : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		leftFront.position = center.position + new Vector3(-distanceTocenterX, 0f, distanceTocenterZ);
+		leftFront.rotation = Quaternion.Euler(0f, -45f, 0f);
 		rightFront.position = center.position + new Vector3(distanceTocenterX, 0f, distanceTocenterZ);
+		rightFront.rotation = Quaternion.Euler(0f, 45f, 0f);		
 		leftBack.position = center.position + new Vector3(-distanceTocenterX, 0f, -distanceTocenterZ);
+		leftBack.rotation = Quaternion.Euler(0f, -135f, 0f);
 		rightBack.position = center.position + new Vector3(distanceTocenterX, 0f, -distanceTocenterZ);
+		rightBack.rotation = Quaternion.Euler(0f, 135f, 0f);
 
-		left.position = center.position + new Vector3(-distanceTocenterX, 0f, 0f);		
-		right.position = center.position + new Vector3(distanceTocenterX, 0f, 0f);	
 		front.position = center.position + new Vector3(0f, 0f, distanceTocenterZ);
-		back.position = center.position + new Vector3(0f, 0f, -distanceTocenterZ);	
+		front.localScale *= 2f;
+		back.position = center.position + new Vector3(0f, 0f, -distanceTocenterZ);
+		back.rotation = Quaternion.Euler(0f, 180f, 0f);	
+		left.position = center.position + new Vector3(-distanceTocenterX, 0f, 0f);		
+		left.rotation = Quaternion.Euler(0f, -90f, 0f);
+		right.position = center.position + new Vector3(distanceTocenterX, 0f, 0f);	
+		right.rotation = Quaternion.Euler(0f, 90f, 0f);		
 	}
 }
