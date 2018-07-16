@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(DataCollector))]
 public class LaserPointer : MonoBehaviour {
 	public Material neutralMaterial;
 	public Material focusMaterial;
