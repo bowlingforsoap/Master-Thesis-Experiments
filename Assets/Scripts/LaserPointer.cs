@@ -127,7 +127,10 @@ public class LaserPointer : MonoBehaviour {
 	}
 
 	private void SelectSecondPole(RaycastHit hit) {
-		SelectPole(hit, ref selectedPole2);
+		bool secondPoleSelected = SelectPole(hit, ref selectedPole2);
+		if (secondPoleSelected) {
+			DataCollector.LogGuess(selectedPole1.transform, selectedPole2.transform);
+		}
 	}
 
 }

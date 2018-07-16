@@ -11,16 +11,16 @@ public class SoundSourceTranslationController : MonoBehaviour {
 	[SerializeField]
 	private Coroutine currentCoroutine;
 
-	public void PositionSoundSource(Vector3 at) {
-		soundSource.transform.position = at;
+	public void PositionSoundSource(Transform at) {
+		soundSource.transform.position = at.position;
 	}
 
-	public void StartTranslateSoundSource(Vector3 from, Vector3 to) {
+	public void StartTranslateSoundSource(Transform from, Transform to) {
 		currentCoroutine = StartCoroutine(TranslateSoundSourceCoroutine(from, to));
 	}
 
-	public void StartTranslateSoundSource(Vector3 to) {
-		StartTranslateSoundSource(soundSource.transform.position, to);
+	public void StartTranslateSoundSource(Transform to) {
+		StartTranslateSoundSource(soundSource.transform, to);
 	}
 
 	public void StopTranslation() {
@@ -31,16 +31,23 @@ public class SoundSourceTranslationController : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator TranslateSoundSourceCoroutine(Vector3 from, Vector3 to) {
-		Debug.Log("Started TranslateSoundSource");		
+	private IEnumerator TranslateSoundSourceCoroutine(Transform fromTransform, Transform toTransform) {
+		Debug.Log("Started TranslateSoundSource");
+
+		Vector3 from = fromTransform.position;
+		Vector3 to = toTransform.position;	
+
+		float timeStart, timeFinish;
 
 		Vector3 direction = (to - from).normalized;
 
 		if (soundSource.transform.position != from) {
-			PositionSoundSource(from);
+			PositionSoundSource(fromTransform);
 		}
 
 		PlaySound();
+
+		timeStart = Time.unscaledTime;
 
 		while(Vector3.Distance(from, to) > Vector3.Distance(from, soundSource.transform.position)) {
 			soundSource.transform.position += direction * soundSourceSpeed * Time.deltaTime;
@@ -48,6 +55,9 @@ public class SoundSourceTranslationController : MonoBehaviour {
 		}
 
 		soundSource.transform.position = to;
+
+		timeFinish = Time.unscaledTime;
+		DataCollector.LogTranslation(fromTransform, toTransform, timeStart, timeFinish);
 
 		StopSound();
 
