@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LaserPointer : MonoBehaviour {
+	public Material neutralMaterial;
+	public Material focusMaterial;
+	public Material selectedMaterial;
+	private GameObject poleSelected = null;
+
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
     {
@@ -58,8 +63,22 @@ public class LaserPointer : MonoBehaviour {
 			if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad)) // Joystick press
 			// if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)) // Hair Trigger press
 			{
-				if (hitSomething) {
-					Debug.Log("Selected a pole!");
+				if (hitSomething)
+				{
+					Debug.Log("Found a pole!");
+
+					// Deselect old
+					if (poleSelected != null) {
+						poleSelected.GetComponent<Renderer>().material = neutralMaterial;
+						if (poleSelected.GetInstanceID() == hit.transform.gameObject.GetInstanceID()) { // We selected the same one
+							poleSelected = null;
+							return;
+						}
+					}
+
+					// Select new
+					poleSelected = hit.transform.gameObject;
+					poleSelected.GetComponent<Renderer>().material = selectedMaterial;
 				}
 			}
 				
