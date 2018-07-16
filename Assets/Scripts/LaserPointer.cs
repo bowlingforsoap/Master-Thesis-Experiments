@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(DataCollector))]
 public class LaserPointer : MonoBehaviour {
+
+	public AudioSource selectionClip;
+	public AudioSource deselectionClip;
 	public Material neutralMaterial;
 	public Material focusMaterial;
 	public Material selectedMaterial;
@@ -106,12 +109,14 @@ public class LaserPointer : MonoBehaviour {
 		if (selectedPole != null) {
 			selectedPole.GetComponent<Renderer>().material = neutralMaterial;
 			if (selectedPole.GetInstanceID() == hit.transform.gameObject.GetInstanceID()) { // We selected the same one
+				deselectionClip.Play();
 				selectedPole = null;
 				return false;
 			}
 		}
 
 		// Select new
+		selectionClip.Play();
 		selectedPole = hit.transform.gameObject;
 		selectedPole.GetComponent<Renderer>().material = selectedMaterial;
 		return true;
