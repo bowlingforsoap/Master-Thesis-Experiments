@@ -7,7 +7,11 @@ public class LaserPointer : MonoBehaviour {
 	public Material neutralMaterial;
 	public Material focusMaterial;
 	public Material selectedMaterial;
-	private GameObject poleSelected = null;
+	[SerializeField]
+	private GameObject selectedPole1 = null;
+	[SerializeField]
+	private GameObject selectedPole2 = null;
+	private bool firstPoleSelected = false;
 
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
@@ -67,18 +71,11 @@ public class LaserPointer : MonoBehaviour {
 				{
 					Debug.Log("Found a pole!");
 
-					// Deselect old
-					if (poleSelected != null) {
-						poleSelected.GetComponent<Renderer>().material = neutralMaterial;
-						if (poleSelected.GetInstanceID() == hit.transform.gameObject.GetInstanceID()) { // We selected the same one
-							poleSelected = null;
-							return;
-						}
+					if (!firstPoleSelected || hit.transform.gameObject.GetInstanceID() == selectedPole1.GetInstanceID()) {
+						firstPoleSelected = SelectFirstPole(hit);
+					} else {
+						SelectSecondPole(hit);
 					}
-
-					// Select new
-					poleSelected = hit.transform.gameObject;
-					poleSelected.GetComponent<Renderer>().material = selectedMaterial;
 				}
 			}
 				
@@ -101,4 +98,30 @@ public class LaserPointer : MonoBehaviour {
 	private void HideLaser() {
 		laser.SetActive(false);
 	}
+
+	// Returns true if a pole was selected, false - otherwise.
+	private bool SelectPole(RaycastHit hit, ref GameObject selectedPole) {
+		// Deselect old
+		if (selectedPole != null) {
+			selectedPole.GetComponent<Renderer>().material = neutralMaterial;
+			if (selectedPole.GetInstanceID() == hit.transform.gameObject.GetInstanceID()) { // We selected the same one
+				selectedPole = null;
+				return false;
+			}
+		}
+
+		// Select new
+		selectedPole = hit.transform.gameObject;
+		selectedPole.GetComponent<Renderer>().material = selectedMaterial;
+		return true;
+	}
+
+	private bool SelectFirstPole(RaycastHit hit) {
+		return SelectPole(hit, ref selectedPole1);
+	}
+
+	private void SelectSecondPole(RaycastHit hit) {
+		SelectPole(hit, ref selectedPole2);
+	}
+
 }
