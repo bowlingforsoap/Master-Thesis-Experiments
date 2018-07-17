@@ -16,6 +16,7 @@ public class LaserPointer : MonoBehaviour {
 	[SerializeField]
 	private GameObject selectedPole2 = null;
 	private bool firstPoleSelected = false;
+	private bool allowSelection = true;
 
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
@@ -109,6 +110,11 @@ public class LaserPointer : MonoBehaviour {
 
 	// Returns true if a pole was selected, false - otherwise.
 	private bool SelectPole(RaycastHit hit, ref GameObject selectedPole, ref Material selectedPoleMaterial) {
+		if (!allowSelection) {
+			Debug.Log("Processing previous guess. Selection not allowed!");
+			return false;
+		}
+
 		// Deselect old
 		if (selectedPole != null) {
 			selectedPole.GetComponent<Renderer>().material = neutralMaterial;
@@ -134,7 +140,21 @@ public class LaserPointer : MonoBehaviour {
 		bool secondPoleSelected = SelectPole(hit, ref selectedPole2, ref selectedMaterial2);
 		if (secondPoleSelected) {
 			DataCollector.LogGuess(selectedPole1.transform, selectedPole2.transform);
+			StartCoroutine(DeselectedPoles());
 		}
+	}
+
+	private IEnumerator DeselectedPoles() {
+		allowSelection = false;
+		
+		yield return new WaitForSeconds(.5f);
+		selectedPole2.GetComponent<Renderer>().material = neutralMaterial;
+		selectedPole2 = null;
+		selectedPole1.GetComponent<Renderer>().material = neutralMaterial;
+		selectedPole1 = null;
+		firstPoleSelected = false;
+		
+		allowSelection = true;
 	}
 
 }
