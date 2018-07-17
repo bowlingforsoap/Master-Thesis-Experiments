@@ -9,8 +9,8 @@ public class LaserPointer : MonoBehaviour {
 	public AudioSource selectionClip;
 	public AudioSource deselectionClip;
 	public Material neutralMaterial;
-	public Material focusMaterial;
-	public Material selectedMaterial;
+	public Material selectedMaterial1;
+	public Material selectedMaterial2;
 	[SerializeField]
 	private GameObject selectedPole1 = null;
 	[SerializeField]
@@ -108,7 +108,7 @@ public class LaserPointer : MonoBehaviour {
 	}
 
 	// Returns true if a pole was selected, false - otherwise.
-	private bool SelectPole(RaycastHit hit, ref GameObject selectedPole) {
+	private bool SelectPole(RaycastHit hit, ref GameObject selectedPole, ref Material selectedPoleMaterial) {
 		// Deselect old
 		if (selectedPole != null) {
 			selectedPole.GetComponent<Renderer>().material = neutralMaterial;
@@ -122,16 +122,16 @@ public class LaserPointer : MonoBehaviour {
 		// Select new
 		selectionClip.Play();
 		selectedPole = hit.transform.gameObject;
-		selectedPole.GetComponent<Renderer>().material = selectedMaterial;
+		selectedPole.GetComponent<Renderer>().material = selectedPoleMaterial;
 		return true;
 	}
 
 	private bool SelectFirstPole(RaycastHit hit) {
-		return SelectPole(hit, ref selectedPole1);
+		return SelectPole(hit, ref selectedPole1, ref selectedMaterial1);
 	}
 
 	private void SelectSecondPole(RaycastHit hit) {
-		bool secondPoleSelected = SelectPole(hit, ref selectedPole2);
+		bool secondPoleSelected = SelectPole(hit, ref selectedPole2, ref selectedMaterial2);
 		if (secondPoleSelected) {
 			DataCollector.LogGuess(selectedPole1.transform, selectedPole2.transform);
 		}
