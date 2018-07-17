@@ -84,8 +84,14 @@ public class SoundSourceTranslationControllerEditor : Editor {
 			controller.StopTranslation();
 		}
 
-
-
+		// Undo
+		GUILayout.Label("\nUndo:");
+		if (GUILayout.Button("Discard Last Translation")) {
+			DataCollector.DiscardLastActualTranslation();
+		}
+		if (GUILayout.Button("Discard Last User Guess")) {
+			DataCollector.DiscardLastGuess();
+		}
 
 		// Translation Test Cases
 		GUILayout.Label("\nTranslate From-To (Test cases):");	
