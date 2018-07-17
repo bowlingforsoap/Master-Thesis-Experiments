@@ -75,10 +75,15 @@ public class LaserPointer : MonoBehaviour {
 				{
 					Debug.Log("Found a pole!");
 
-					if (!firstPoleSelected || hit.transform.gameObject.GetInstanceID() == selectedPole1.GetInstanceID()) {
-						firstPoleSelected = SelectFirstPole(hit);
+					if ((!firstPoleSelected && (selectedPole2 == null || (selectedPole2 !=null && hit.transform.gameObject.GetInstanceID() != selectedPole2.GetInstanceID()))) || // if the first pole is not selected && the hit is not the same as the selectedPole2
+						hit.transform.gameObject.GetInstanceID() == selectedPole1.GetInstanceID()) { // or if it is, but we are raycasting the same pole
+							firstPoleSelected = SelectFirstPole(hit);
 					} else {
-						SelectSecondPole(hit);
+						// if (hit.transform.gameObject.GetInstanceID() != selectedPole1.GetInstanceID()) { // Quick fix
+							SelectSecondPole(hit);
+						// } else {
+							// firstPoleSelected = SelectFirstPole(hit);
+						// }
 					}
 				}
 			}
@@ -97,7 +102,6 @@ public class LaserPointer : MonoBehaviour {
         laserTransform.LookAt(hitPoint);
         laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y, hitDistance);
     }
-
 
 	private void HideLaser() {
 		laser.SetActive(false);
