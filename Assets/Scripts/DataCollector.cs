@@ -5,11 +5,11 @@ using System.IO;
 using System.Text;
 
 public class DataCollector : MonoBehaviour {
-	public static Translation actualTranslation;
-	public static Translation guess;
+	public static Translation actualTranslation = null;
+	public static Translation guess = null;
 
-	public static bool discardLastActualTranslation;
-	public static bool discardLastGuess;
+	public static bool discardLastActualTranslation = false;
+	public static bool discardLastGuess = false;
 
 	public string userGuessesFilePath;
 	public string userPositionAndOrientationFilePath;
@@ -48,7 +48,9 @@ public class DataCollector : MonoBehaviour {
 	public static void LogGuess(Transform selectedPole1, Transform selectedPole2) {
 		if (!discardLastGuess) {
 			Translation prevGuess = guess;
-			userGuessesWriter.WriteLine(Utils.GuessToString(prevGuess));
+			if (prevGuess != null) {
+				userGuessesWriter.WriteLine(Utils.GuessToString(prevGuess));
+			}
 
 			discardLastGuess = false;
 		}
@@ -61,7 +63,9 @@ public class DataCollector : MonoBehaviour {
 	public static void LogTranslation(Transform _from, Transform _to, float _timeStart, float _timeFinish) {
 		if (!discardLastActualTranslation) {
 			Translation prevTranslation = actualTranslation;
-			actualTranslationsWriter.WriteLine(Utils.TranslationToString(prevTranslation));
+			if (prevTranslation != null) {
+				actualTranslationsWriter.WriteLine(Utils.TranslationToString(prevTranslation));
+			}
 
 			discardLastActualTranslation = false;
 		}
