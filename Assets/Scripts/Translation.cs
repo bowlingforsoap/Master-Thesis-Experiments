@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Translation {
 	public Vector3 from;
 	public Vector3 to;

@@ -37,8 +37,6 @@ public class SoundSourceTranslationController : MonoBehaviour {
 		Vector3 from = fromTransform.position;
 		Vector3 to = toTransform.position;	
 
-		float timeStart, timeFinish;
-
 		Vector3 direction = (to - from).normalized;
 
 		if (soundSource.transform.position != from) {
@@ -47,17 +45,17 @@ public class SoundSourceTranslationController : MonoBehaviour {
 
 		PlaySound();
 
-		timeStart = Time.unscaledTime;
+		// Store tranlation from
+		DataCollector.StoreTranslation(fromTransform, Time.unscaledTime);
 
 		while(Vector3.Distance(from, to) > Vector3.Distance(from, soundSource.transform.position)) {
 			soundSource.transform.position += direction * soundSourceSpeed * Time.deltaTime;
 			yield return null;
 		}
-
 		soundSource.transform.position = to;
 
-		timeFinish = Time.unscaledTime;
-		DataCollector.LogTranslation(fromTransform, toTransform, timeStart, timeFinish);
+		// Store translation to
+		DataCollector.StoreTranslation(toTransform, Time.unscaledTime);
 
 		StopSound();
 

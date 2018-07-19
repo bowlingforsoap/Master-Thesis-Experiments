@@ -3,108 +3,231 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Text;
+using System;
 
-public class DataCollector : MonoBehaviour {
-	public static Translation actualTranslation = null;
-	public static Translation guess = null;
+public class DataCollector : MonoBehaviour
+{
+	private static DataCollector dataCollector;
+	[SerializeField]
+    public  static Translation actualTranslation = new Translation();
+    [SerializeField]
+	public static Translation guess = new Translation();
+    private static Translation prevGuess;
+    private static Translation prevTranslation;
 
-	public static bool discardLastActualTranslation = false;
-	public static bool discardLastGuess = false;
+    public  static bool discardLastActualTranslation = false;
+    public  static bool discardLastGuess = false;
 
-	public string userGuessesFilePath;
-	public string userPositionAndOrientationFilePath;
-	public string actualTranslationsFilePath;
+    public string actualTranslationAndGuessFilePath;
+    public string userPositionAndOrientationFilePath;
 
-	public Transform headTransform;
+    public Transform headTransform;
+	public Transform center;
+	public Transform front;
 
-	private static StreamWriter userGuessesWriter;
-	private static StreamWriter userPositionAndOrientationWriter;
-	private static StreamWriter actualTranslationsWriter;
+    private static StreamWriter actualTranslationAndGuessWriter;
+    private static StreamWriter userPositionAndOrientationWriter;
 
-	// private StringBuilder guess = new StringBuilder();
-	private StringBuilder positionAndOrientation = new StringBuilder();
+    // private StringBuilder guess = new StringBuilder();
+    private StringBuilder positionAndOrientation = new StringBuilder();
 
-	void Start() {
-		// Open streams
-		userGuessesWriter = new StreamWriter(userGuessesFilePath, false);
-		userPositionAndOrientationWriter = new StreamWriter(userPositionAndOrientationFilePath, false);
-		actualTranslationsWriter = new StreamWriter(actualTranslationsFilePath, false);
+    void Start()
+    {
+		dataCollector = this;
 
-		userGuessesWriter.WriteLine("Guess From X, Guess From Y, Guess From Z, Guess To X, Guess To Y, Guess To Z, Guess From Abbreviation, Guess To Abbreviation");
-		userPositionAndOrientationWriter.WriteLine("Position X, Position Y, Position Z, Rotation X, Rotation Y, Rotation Z, Time");
-		actualTranslationsWriter.WriteLine("From X, From Y, From Z, To X, To Y, To Z, From Abbreviation, To Abbreviation, Time Start, Time Finish");
-	}
+        // Open streams
+        actualTranslationAndGuessWriter = new StreamWriter(actualTranslationAndGuessFilePath, false);
+        userPositionAndOrientationWriter = new StreamWriter(userPositionAndOrientationFilePath, false);
 
-	void Update() {
-		LogPositionAndOrientation(headTransform);
-		// userPositionAndOrientationWriter.Flush();	
-	}
+        actualTranslationAndGuessWriter.WriteLine("From X, From Y, From Z, To X, To Y, To Z, From Abbreviation, To Abbreviation, Translation Start, Translation Finish, Guess Start, Guess Finish, Angle From, Angle To, Divergence Angle From, Divergence Angle To");
+        userPositionAndOrientationWriter.WriteLine("Position X, Position Y, Position Z, Rotation X, Rotation Y, Rotation Z, Time");
+    }
+
+    void Update()
+    {
+        LogPositionAndOrientation(headTransform);
+        // userPositionAndOrientationWriter.Flush();	
+    }
 
 
-	private static void LogPositionAndOrientation(Transform headTransform) {
-		userPositionAndOrientationWriter.WriteLine(Utils.GetPositionAndOrientationFromTransform(headTransform));
-	}
+    private void LogPositionAndOrientation(Transform headTransform)
+    {
+        userPositionAndOrientationWriter.WriteLine(Utils.GetPositionAndOrientationFromTransform(headTransform));
+    }
 
-	public static void LogGuess(Transform selectedPole1, Transform selectedPole2) {
-		if (!discardLastGuess) {
-			Translation prevGuess = guess;
-			if (prevGuess != null) {
-				userGuessesWriter.WriteLine(Utils.GuessToString(prevGuess));
-			}
-
+    private static void LogActualTranslationAndGuess()
+    {
+		//TODO: Check for null and add Discard for prev translation and guess
+		if (discardLastGuess) {
+			guess = new Translation();
 			discardLastGuess = false;
+			return;
 		}
 
-		string selectedPole1Name = Utils.PoleName(selectedPole1);
-		string selectedPole2Name = Utils.PoleName(selectedPole2);
-		guess = new Translation() {from = selectedPole1.position, to = selectedPole2.position, fromAbbr = selectedPole1Name, toAbbr = selectedPole2Name};
-	}
-
-	public static void LogTranslation(Transform _from, Transform _to, float _timeStart, float _timeFinish) {
-		if (!discardLastActualTranslation) {
-			Translation prevTranslation = actualTranslation;
-			if (prevTranslation != null) {
-				actualTranslationsWriter.WriteLine(Utils.TranslationToString(prevTranslation));
-			}
-
+		if (discardLastActualTranslation) {
+			actualTranslation = new Translation();
 			discardLastActualTranslation = false;
+			return;
 		}
 
-		actualTranslation = new Translation() {from = _from.position, to = _to.position, fromAbbr = _from.gameObject.name, toAbbr = _to.gameObject.name, timeStart = _timeStart, timeFinish = _timeFinish};
+		if (prevGuess != null && prevTranslation != null && prevGuess.from != null && prevGuess.to != null && prevTranslation.from != null && prevTranslation.to != null) {
+			StringBuilder actualTranslationAndGuess = new StringBuilder();
+
+			float fromAngle = ComputeAngleXZ(dataCollector.front.position, prevTranslation.from);
+			float toAngle = ComputeAngleXZ(dataCollector.front.position, prevTranslation.to);
+			float fromDivergence = ComputeAngleXZ(prevTranslation.from, prevGuess.from);
+			float toDivergence = ComputeAngleXZ(prevTranslation.to, prevGuess.to);
+
+			actualTranslationAndGuess.Append(Utils.TranslationToString(prevTranslation)); // 10 values
+			actualTranslationAndGuess.Append(',');
+			actualTranslationAndGuess.Append(Utils.GuessToString(prevGuess)); // 8 values
+			actualTranslationAndGuess.Append(',');
+			actualTranslationAndGuess.Append(fromAngle);
+			actualTranslationAndGuess.Append(',');
+			actualTranslationAndGuess.Append(toAngle);
+			actualTranslationAndGuess.Append(',');
+			actualTranslationAndGuess.Append(fromDivergence);
+			actualTranslationAndGuess.Append(',');
+			actualTranslationAndGuess.Append(toDivergence);
+
+			actualTranslationAndGuessWriter.WriteLine(actualTranslationAndGuess.ToString()); // 22 total values per line
+		}
+
+        prevTranslation = actualTranslation;
+        prevGuess = guess;
+
+		ClearCurrentAnswer();
+    }
+
+
+    public static void StoreGuess(Vector3 point, float time)
+    {
+        if (guess != null && guess.from == null)
+        {
+            StoreGuessFrom(point, time);
+        }
+        else if (guess != null && guess.from != null)
+        {
+            StoreGuessTo(point, time);
+        }
+    }
+
+	public static void StoreTranslation(Transform transform, float time) {
+		if (actualTranslation != null && actualTranslation.from == null) {
+			StoreTranslationFrom(transform, time);
+		} else if (actualTranslation != null && actualTranslation.from != null) {
+			StoreTranslationTo(transform, time);
+		}
 	}
 
-	public static void DiscardLastActualTranslation() {
-		discardLastActualTranslation = true;
-	}
+    private static void StoreGuessFrom(Vector3 _from, float _timeStart)
+    {
+        if (guess != null)
+        {
+            guess.from = _from;
+            guess.timeStart = _timeStart;
+        }
+        else
+        {
+            guess = new Translation() { from = _from, timeStart = _timeStart };
+        }
+    }
 
-	public static void DiscardLastGuess() {
-		discardLastGuess = true;
-	}
+    private static void StoreGuessTo(Vector3 _to, float _timeFinish)
+    {
+        if (guess != null)
+        {
+            guess.from = _to;
+            guess.timeStart = _timeFinish;
 
-	private static void CloseUserGuessWriter() {
-		if (guess != null) {
-			userGuessesWriter.WriteLine(Utils.GuessToString(guess));
-		}
-		if (userGuessesWriter != null) {
-			userGuessesWriter.Close();
-		}
-	}
+			// Try to log answer
+			if (actualTranslation != null && actualTranslation.from != null && actualTranslation.to != null) {
+				LogActualTranslationAndGuess();
+			}
+        }		
+    }
 
-	private static void CloseActualTranslationWriter() {
-		if (actualTranslation != null) {
-			actualTranslationsWriter.WriteLine(Utils.TranslationToString(actualTranslation));
-		}
-		if (actualTranslationsWriter != null) {
-			actualTranslationsWriter.Close();
-		}
-	}
 
-	void OnApplicationQuit() {
-		// Close streams
-		CloseUserGuessWriter();
-		if (userPositionAndOrientationWriter != null) {
-			userPositionAndOrientationWriter.Close();
-		}
-		CloseActualTranslationWriter();
-	}
+    private static void StoreTranslationFrom(Transform _from, float _timeStart)
+    {
+        if (actualTranslation != null)
+        {
+            actualTranslation.from = _from.position;
+            actualTranslation.fromAbbr = _from.gameObject.name;
+            actualTranslation.timeStart = _timeStart;
+        }
+        else
+        {
+            actualTranslation = new Translation() { from = _from.position, fromAbbr = _from.gameObject.name, timeStart = _timeStart, };
+        }
+    }
+
+    private static void StoreTranslationTo(Transform _to, float _timeFinish)
+    {
+        if (actualTranslation != null)
+        {
+            actualTranslation.to = _to.position;
+            actualTranslation.toAbbr = _to.gameObject.name;
+            actualTranslation.timeFinish = _timeFinish;
+		
+			// Try to log answer
+			if (guess != null && guess.from != null && guess.to != null) { // Assume prev. translation was discarded, and log
+				LogActualTranslationAndGuess();
+			}
+        }
+    }
+
+    private static float ComputeAngleXZ(Vector3 circlePoint1, Vector3 circlePoint2)
+    {
+		Vector3 from, to;
+
+		from = circlePoint1 - dataCollector.center.position;
+		to = circlePoint2 - dataCollector.center.position;
+
+		from.y = 0f;
+		to.y = 0f;
+
+		return Vector3.SignedAngle(from, to, Vector3.up);
+    }
+    private static void ClearCurrentAnswer()
+    {
+        actualTranslation = new Translation();
+        guess = new Translation();
+    }
+	
+    public static void DiscardLastActualTranslation()
+    {
+        discardLastActualTranslation = true;
+    }
+
+    public static void DiscardLastGuess()
+    {
+        discardLastGuess = true;
+    }
+
+    private  void CloseActualTranslationUserGuessWriter()
+    {
+		// Log last
+        if (actualTranslation != null && guess != null)
+        {
+			LogActualTranslationAndGuess();
+        }
+
+		// Close
+        if (actualTranslationAndGuessWriter != null)
+        {
+            actualTranslationAndGuessWriter.Close();
+        }
+    }
+
+	// Close streams
+    void OnApplicationQuit()
+    {
+        CloseActualTranslationUserGuessWriter();
+        
+		if (userPositionAndOrientationWriter != null)
+        {
+            userPositionAndOrientationWriter.Close();
+        }
+    }
 }

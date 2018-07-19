@@ -20,6 +20,7 @@ public class Utils {
 	public static string TranslationToString(Translation translation) {
 		string result = "";
 
+		// 2xVector3 = 6 values + 4 = 10 values total for translation
 		result += Vector3ToCSV(translation.from)+','+Vector3ToCSV(translation.to)+','+translation.fromAbbr+','+translation.toAbbr+','+translation.timeStart+','+translation.timeFinish;
 		// result += '\n';
 
@@ -29,7 +30,8 @@ public class Utils {
 	public static string GuessToString(Translation guess) {
 		string result = "";
 
-		result += Vector3ToCSV(guess.from)+','+Vector3ToCSV(guess.to)+','+guess.fromAbbr+','+guess.toAbbr;
+		// 2xVector3 +2 = 8 total values
+		result += Vector3ToCSV(guess.from)+','+Vector3ToCSV(guess.to)+','+guess.timeStart+','+guess.timeFinish;
 		// result += '\n';
 
 		return result;

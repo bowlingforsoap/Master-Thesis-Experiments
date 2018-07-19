@@ -6,17 +6,11 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(DataCollector))]
 public class LaserPointer : MonoBehaviour {
 
-	public AudioSource selectionClip;
-	public AudioSource deselectionClip;
-	public Material neutralMaterial;
-	public Material selectedMaterial1;
-	public Material selectedMaterial2;
+	public GameObject rectilePrefab;
 	[SerializeField]
-	private GameObject selectedPole1 = null;
-	[SerializeField]
-	private GameObject selectedPole2 = null;
-	private bool firstPoleSelected = false;
+	private GameObject rectile;
 	private bool allowSelection = true;
+
 
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
@@ -42,6 +36,9 @@ public class LaserPointer : MonoBehaviour {
     {
         laser = Instantiate(laserPrefab);
         laserTransform = laser.transform;
+
+		rectile = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
+		rectile.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -58,34 +55,28 @@ public class LaserPointer : MonoBehaviour {
 				{
 					hitPoint = transform.position + transform.forward * maxHitDistance;
 					hitDistance = maxHitDistance;
+					
+					HideRectile();
 				} else {
 					hitPoint = hit.point;
 					hitDistance = hit.distance;
+					
+					ShowRectile(hit.point);
 				}
 
 				ShowLaser();
 			} else {
 				HideLaser();
+				HideRectile();
 			}
 			
-			// Show laser
+
 			if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad)) // Joystick press
 			// if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)) // Hair Trigger press
 			{
 				if (hitSomething)
 				{
-					Debug.Log("Found a pole!");
-
-					if ((!firstPoleSelected && (selectedPole2 == null || (selectedPole2 !=null && hit.transform.gameObject.GetInstanceID() != selectedPole2.GetInstanceID()))) || // if the first pole is not selected && the hit is not the same as the selectedPole2
-						hit.transform.gameObject.GetInstanceID() == selectedPole1.GetInstanceID()) { // or if it is, but we are raycasting the same pole
-							firstPoleSelected = SelectFirstPole(hit);
-					} else {
-						// if (hit.transform.gameObject.GetInstanceID() != selectedPole1.GetInstanceID()) { // Quick fix
-							SelectSecondPole(hit);
-						// } else {
-							// firstPoleSelected = SelectFirstPole(hit);
-						// }
-					}
+					DataCollector.StoreGuess(hit.point, Time.unscaledTime);
 				}
 			}
 				
@@ -104,12 +95,21 @@ public class LaserPointer : MonoBehaviour {
         laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y, hitDistance);
     }
 
+	private void ShowRectile(Vector3 position) {
+		rectile.transform.position = position;
+		rectile.SetActive(true);
+	}
+
+	private void HideRectile() {
+		rectile.SetActive(false);
+	}
+
 	private void HideLaser() {
 		laser.SetActive(false);
 	}
 
 	// Returns true if a pole was selected, false - otherwise.
-	private bool SelectPole(RaycastHit hit, ref GameObject selectedPole, ref Material selectedPoleMaterial) {
+	/* private bool SelectPole(RaycastHit hit, ref GameObject selectedPole, ref Material selectedPoleMaterial) {
 		if (!allowSelection) {
 			Debug.Log("Processing previous guess. Selection not allowed!");
 			return false;
@@ -142,9 +142,9 @@ public class LaserPointer : MonoBehaviour {
 			DataCollector.LogGuess(selectedPole1.transform, selectedPole2.transform);
 			StartCoroutine(DeselectedPoles());
 		}
-	}
+	} */
 
-	private IEnumerator DeselectedPoles() {
+	/* private IEnumerator DeselectedPoles() {
 		allowSelection = false;
 		
 		yield return new WaitForSeconds(.5f);
@@ -155,6 +155,6 @@ public class LaserPointer : MonoBehaviour {
 		firstPoleSelected = false;
 		
 		allowSelection = true;
-	}
+	} */
 
 }
