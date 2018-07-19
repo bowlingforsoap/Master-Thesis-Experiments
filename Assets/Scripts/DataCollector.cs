@@ -39,7 +39,7 @@ public class DataCollector : MonoBehaviour
         actualTranslationAndGuessWriter = new StreamWriter(actualTranslationAndGuessFilePath, false);
         userPositionAndOrientationWriter = new StreamWriter(userPositionAndOrientationFilePath, false);
 
-        actualTranslationAndGuessWriter.WriteLine("From X, From Y, From Z, To X, To Y, To Z, From Abbreviation, To Abbreviation, Translation Start, Translation Finish, Guess Start, Guess Finish, Angle From, Angle To, Divergence Angle From, Divergence Angle To");
+        actualTranslationAndGuessWriter.WriteLine("From X, From Y, From Z, To X, To Y, To Z, From Abbreviation, To Abbreviation, Translation Start, Translation Finish, Guess Start, Guess Finish, Angle From, Angle To, Guess Angle From, Guess Angle To, Divergence Angle From, Divergence Angle To");
         userPositionAndOrientationWriter.WriteLine("Position X, Position Y, Position Z, Rotation X, Rotation Y, Rotation Z, Time");
     }
 
@@ -75,6 +75,8 @@ public class DataCollector : MonoBehaviour
 
 			float fromAngle = ComputeAngleXZ(dataCollector.front.position, prevTranslation.from);
 			float toAngle = ComputeAngleXZ(dataCollector.front.position, prevTranslation.to);
+            float guessFromAngle = ComputeAngleXZ(dataCollector.front.position, prevGuess.from);
+            float guessToAngle = ComputeAngleXZ(dataCollector.front.position, prevGuess.to);
 			float fromDivergence = ComputeAngleXZ(prevTranslation.from, prevGuess.from);
 			float toDivergence = ComputeAngleXZ(prevTranslation.to, prevGuess.to);
 
@@ -86,11 +88,15 @@ public class DataCollector : MonoBehaviour
 			actualTranslationAndGuess.Append(',');
 			actualTranslationAndGuess.Append(toAngle);
 			actualTranslationAndGuess.Append(',');
+            actualTranslationAndGuess.Append(guessFromAngle);
+			actualTranslationAndGuess.Append(',');
+			actualTranslationAndGuess.Append(guessToAngle);
+			actualTranslationAndGuess.Append(',');
 			actualTranslationAndGuess.Append(fromDivergence);
 			actualTranslationAndGuess.Append(',');
 			actualTranslationAndGuess.Append(toDivergence);
 
-			actualTranslationAndGuessWriter.WriteLine(actualTranslationAndGuess.ToString()); // 22 total values per line
+			actualTranslationAndGuessWriter.WriteLine(actualTranslationAndGuess.ToString()); // 24 total values per line
 		}
 
         prevTranslation = actualTranslation;
