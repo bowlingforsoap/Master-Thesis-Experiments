@@ -6,6 +6,8 @@ public class PlaceTestPoints : MonoBehaviour {
 	public Transform center;
 	public Transform leftFront, rightFront, leftBack, rightBack, left, right, front, back;
 	public float distanceToInscribedSquare;
+	public Transform guessCylinder;
+	public Vector3 guessCylinderRadius;
 	// public float distanceTocenterZ; 
 	[SerializeField]
 	private float radius;
@@ -24,12 +26,14 @@ public class PlaceTestPoints : MonoBehaviour {
 		radius = Vector3.Distance(center.position, rightBack.position);
 
 		front.position = center.position + new Vector3(0f, 0f, radius);
-		front.localScale *= 2f;
+		// front.localScale *= 2f;
 		back.position = center.position + new Vector3(0f, 0f, -radius);
 		back.rotation = Quaternion.Euler(0f, 180f, 0f);	
 		left.position = center.position + new Vector3(-radius, 0f, 0f);		
 		left.rotation = Quaternion.Euler(0f, -90f, 0f);
 		right.position = center.position + new Vector3(radius, 0f, 0f);	
-		right.rotation = Quaternion.Euler(0f, 90f, 0f);		
+		right.rotation = Quaternion.Euler(0f, 90f, 0f);	
+
+		guessCylinder.localScale = new Vector3(guessCylinder.localScale.x*guessCylinderRadius.x,guessCylinder.localScale.y* guessCylinderRadius.y,guessCylinder.localScale.z * guessCylinderRadius.z);
 	}
 }
