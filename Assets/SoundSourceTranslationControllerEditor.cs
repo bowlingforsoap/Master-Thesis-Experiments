@@ -85,13 +85,13 @@ public class SoundSourceTranslationControllerEditor : Editor {
 		}
 
 		// Undo
-		GUILayout.Label("\nUndo:");
+		/* GUILayout.Label("\nUndo:");
 		if (GUILayout.Button("Discard Last Translation")) {
 			DataCollector.DiscardLastActualTranslation();
 		}
 		if (GUILayout.Button("Discard Last User Guess")) {
 			DataCollector.DiscardLastGuess();
-		}
+		} */
 
 		// Translation Test Cases
 		GUILayout.Label("\nTranslate From-To (Test cases):");	
