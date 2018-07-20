@@ -24,6 +24,8 @@ public class DataCollector : MonoBehaviour
     public Transform headTransform;
 	public Transform center;
 	public Transform front;
+    [SerializeField]
+    private int actualTranslationAndGuessFileEntries = 0;
 
     private static StreamWriter actualTranslationAndGuessWriter;
     private static StreamWriter userPositionAndOrientationWriter;
@@ -113,7 +115,10 @@ public class DataCollector : MonoBehaviour
             actualTranslationAndGuess.Append(toDivergence);
 
             actualTranslationAndGuessWriter.WriteLine(actualTranslationAndGuess.ToString()); // 24 total values per line
+            
         }
+        
+        dataCollector.actualTranslationAndGuessFileEntries++;
     }
 
     public static void StoreGuess(Vector3 point, float time)
