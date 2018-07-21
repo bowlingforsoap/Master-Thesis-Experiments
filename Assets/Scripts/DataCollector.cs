@@ -81,6 +81,9 @@ public class DataCollector : MonoBehaviour
             prevTranslation = actualTranslation;
             prevGuess = guess;
 
+            dataCollector.actualTranslationAndGuessFileEntries++;
+            
+            dataCollector.StartCoroutine(LaserPointer.HideGuessesIndicator());
             ClearCurrentAnswer();
         }
     }
@@ -115,20 +118,21 @@ public class DataCollector : MonoBehaviour
             actualTranslationAndGuess.Append(toDivergence);
 
             actualTranslationAndGuessWriter.WriteLine(actualTranslationAndGuess.ToString()); // 24 total values per line
-            
         }
-        
-        dataCollector.actualTranslationAndGuessFileEntries++;
     }
 
     public static void StoreGuess(Vector3 point, float time)
     {
         if (guess != null && guess.from == Vector3.zero)
         {
+            LaserPointer.PlaceGuessIndicator(0, point);
+
             StoreGuessFrom(point, time);
         }
         else if (guess != null && guess.from != Vector3.zero)
         {
+            LaserPointer.PlaceGuessIndicator(1, point);
+
             StoreGuessTo(point, time);
         }
     }

@@ -9,7 +9,10 @@ public class LaserPointer : MonoBehaviour {
 	public GameObject rectilePrefab;
 	[SerializeField]
 	private GameObject rectile;
+	private static GameObject[] guessIndicators = new GameObject[2];
 	private bool allowSelection = true;
+	public Material guessMaterial1;
+	public Material guessMaterial2;
 
 
 	private SteamVR_TrackedObject trackedObj;
@@ -39,6 +42,13 @@ public class LaserPointer : MonoBehaviour {
 
 		rectile = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
 		rectile.SetActive(false);
+
+		guessIndicators[0] = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
+		guessIndicators[0].GetComponent<MeshRenderer>().material = guessMaterial1;
+		guessIndicators[0].SetActive(false);
+		guessIndicators[1] = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
+		guessIndicators[1].GetComponent<MeshRenderer>().material = guessMaterial2;
+		guessIndicators[1].SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -87,7 +97,7 @@ public class LaserPointer : MonoBehaviour {
 			// }
 	}
 
-    private void ShowLaser()
+	private void ShowLaser()
     {
         laser.SetActive(true);
         laserTransform.position = Vector3.Lerp(trackedObj.transform.position, hitPoint, .5f); // Place the laser in the middle between the controller and the hitPoint
@@ -108,53 +118,14 @@ public class LaserPointer : MonoBehaviour {
 		laser.SetActive(false);
 	}
 
-	// Returns true if a pole was selected, false - otherwise.
-	/* private bool SelectPole(RaycastHit hit, ref GameObject selectedPole, ref Material selectedPoleMaterial) {
-		if (!allowSelection) {
-			Debug.Log("Processing previous guess. Selection not allowed!");
-			return false;
-		}
-
-		// Deselect old
-		if (selectedPole != null) {
-			selectedPole.GetComponent<Renderer>().material = neutralMaterial;
-			if (selectedPole.GetInstanceID() == hit.transform.gameObject.GetInstanceID()) { // We selected the same one
-				deselectionClip.Play();
-				selectedPole = null;
-				return false;
-			}
-		}
-
-		// Select new
-		selectionClip.Play();
-		selectedPole = hit.transform.gameObject;
-		selectedPole.GetComponent<Renderer>().material = selectedPoleMaterial;
-		return true;
+	public static void PlaceGuessIndicator(int guessIndicator, Vector3 point) {
+		guessIndicators[guessIndicator].transform.position = point;
+		guessIndicators[guessIndicator].SetActive(true);
 	}
 
-	private bool SelectFirstPole(RaycastHit hit) {
-		return SelectPole(hit, ref selectedPole1, ref selectedMaterial1);
+	public static IEnumerator HideGuessesIndicator() {
+		yield return new WaitForSeconds(.3f); 
+		guessIndicators[0].SetActive(false);
+		guessIndicators[1].SetActive(false);
 	}
-
-	private void SelectSecondPole(RaycastHit hit) {
-		bool secondPoleSelected = SelectPole(hit, ref selectedPole2, ref selectedMaterial2);
-		if (secondPoleSelected) {
-			DataCollector.LogGuess(selectedPole1.transform, selectedPole2.transform);
-			StartCoroutine(DeselectedPoles());
-		}
-	} */
-
-	/* private IEnumerator DeselectedPoles() {
-		allowSelection = false;
-		
-		yield return new WaitForSeconds(.5f);
-		selectedPole2.GetComponent<Renderer>().material = neutralMaterial;
-		selectedPole2 = null;
-		selectedPole1.GetComponent<Renderer>().material = neutralMaterial;
-		selectedPole1 = null;
-		firstPoleSelected = false;
-		
-		allowSelection = true;
-	} */
-
 }
