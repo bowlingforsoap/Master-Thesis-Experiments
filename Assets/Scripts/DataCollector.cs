@@ -32,19 +32,30 @@ public class DataCollector : MonoBehaviour
 
     // private StringBuilder guess = new StringBuilder();
     private StringBuilder positionAndOrientation = new StringBuilder();
+    private const string EXT = ".csv"; 
 
     void Start()
     {
 		dataCollector = this;
 
         // Open streams
-        actualTranslationAndGuessWriter = new StreamWriter(actualTranslationAndGuessFilePath, false);
-        userPositionAndOrientationWriter = new StreamWriter(userPositionAndOrientationFilePath, false);
+        int count = 1;
+        while (true) {
+            if (System.IO.File.Exists(actualTranslationAndGuessFilePath + count + EXT)) {
+                count++;
+                continue;
+            }
+
+            actualTranslationAndGuessWriter = new StreamWriter(actualTranslationAndGuessFilePath + count + EXT, false);
+            userPositionAndOrientationWriter = new StreamWriter(userPositionAndOrientationFilePath + count + EXT, false);
+            break;
+        }
 
         actualTranslationAndGuessWriter.WriteLine("From X, From Y, From Z, To X, To Y, To Z, From Abbreviation, To Abbreviation, Translation Start, Translation Finish, " 
             + "Guess From X, Guess From Y, Guess From Z, Guess To X, Guess To Y, Guess To Z, Guess Start, Guess Finish, "
             + "Angle From, Angle To, Guess Angle From, Guess Angle To, Divergence Angle From, Divergence Angle To");
         userPositionAndOrientationWriter.WriteLine("Position X, Position Y, Position Z, Rotation X, Rotation Y, Rotation Z, Time");
+        
     }
 
     void Update()
