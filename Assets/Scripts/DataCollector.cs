@@ -129,6 +129,7 @@ public class DataCollector : MonoBehaviour
             actualTranslationAndGuess.Append(toDivergence);
 
             actualTranslationAndGuessWriter.WriteLine(actualTranslationAndGuess.ToString()); // 24 total values per line
+            actualTranslationAndGuessWriter.Flush();
         }
     }
 

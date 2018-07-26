@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(DataCollector))]
 public class LaserPointer : MonoBehaviour {
 
 	public GameObject rectilePrefab;
@@ -13,7 +12,6 @@ public class LaserPointer : MonoBehaviour {
 	private bool allowSelection = true;
 	public Material guessMaterial1;
 	public Material guessMaterial2;
-
 
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
