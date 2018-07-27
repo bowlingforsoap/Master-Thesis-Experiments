@@ -35,3 +35,7 @@ sysinfo.txt
 
 # CSV
 *.csv*
+
+# VSCode
+.vscode/*
+.vscode/launch.json

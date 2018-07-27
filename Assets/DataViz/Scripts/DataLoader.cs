@@ -43,9 +43,8 @@ public class DataLoader : MonoBehaviour {
 						Vector3 _to = new Vector3(float.Parse(values[3]), float.Parse(values[4]), float.Parse(values[5]));
 						try {
 							paths.Add(path, new Line(){from = _from, to = _to});
-						} catch (InvalidOperationException) {
-
-						}
+						} catch (InvalidOperationException) {}
+						catch (ArgumentException) {}
 
 						// Parse guesses
 						Vector3 _fromGuess = new Vector3(float.Parse(values[10]), float.Parse(values[11]), float.Parse(values[12]));
@@ -54,6 +53,7 @@ public class DataLoader : MonoBehaviour {
 						try {
 							guessesForPath.Add(path, new List<Guess>(datafilesNames.Length));
 						} catch (InvalidOperationException) {}
+						catch (ArgumentException) {}
 						guessesForPath[path].Add(guess);
 					} catch (IndexOutOfRangeException) {}
 				}
@@ -61,8 +61,6 @@ public class DataLoader : MonoBehaviour {
 
 			_userId++;
 		}
-
-		GetComponent<DataRenderer>().DataIsReady = true;
 	}
 	
 	// Update is called once per frame

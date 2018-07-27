@@ -13,7 +13,11 @@ public class DataRendererEditor : Editor {
 		DataRenderer dataRenderer = (DataRenderer) target;
 		DataLoader dataLoader = dataRenderer.GetComponent<DataLoader>();
 
-		var keys = dataLoader.paths.Keys;
-		index = EditorGUILayout.Popup(index, keys.ToArray());
+		GUILayout.Label("Choose the path to visualize:");
+		index = EditorGUILayout.Popup(index, dataLoader.paths.Keys.ToArray());
+
+		if (GUILayout.Button("Visualize")) {
+			dataRenderer.Visualize(index);
+		}
 	}
 }
