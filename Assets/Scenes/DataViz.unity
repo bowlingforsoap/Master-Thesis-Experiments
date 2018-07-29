@@ -609,6 +609,11 @@ MonoBehaviour:
   - Assets/Resources/actualTranslationsAndGuesses4.csv
   - Assets/Resources/actualTranslationsAndGuesses6.csv
   - Assets/Resources/actualTranslationsAndGuesses8.csv
+  - Assets/Resources/actualTranslationsAndGuesses10.csv
+  - Assets/Resources/actualTranslationsAndGuesses12.csv
+  - Assets/Resources/actualTranslationsAndGuesses14.csv
+  - Assets/Resources/actualTranslationsAndGuesses16.csv
+  - Assets/Resources/actualTranslationsAndGuesses20.csv
 --- !u!4 &1408798430
 Transform:
   m_ObjectHideFlags: 0

@@ -39,3 +39,6 @@ sysinfo.txt
 # VSCode
 .vscode/*
 .vscode/launch.json
+
+# DataViz
+Generated/

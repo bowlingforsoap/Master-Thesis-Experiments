@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
+using System.Linq;
 
 
 public class DataLoader : MonoBehaviour {
@@ -25,16 +26,19 @@ public class DataLoader : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		LoadData();
+	}
+
+	private void LoadData() {
 		int _userId = 0;
+
 		foreach (string fileName in datafilesNames) {
+
 			using (dataReader = new StreamReader(fileName)) {
 				string data = dataReader.ReadToEnd();
-				
 				string[] rows = data.Split('\n');
 				for (int i = 1; i < rows.Length; i++) {
-					// Debug.Log(rows[i]);
 					string[] values = rows[i].Split(',');
-					// Debug.Log("values.Length: " + values.Length);
 
 					try {
 						// Parse paths
@@ -66,5 +70,9 @@ public class DataLoader : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public string pathNameFromIndex(int pathIndex) {
+		return paths.Keys.ToArray()[pathIndex];
 	}
 }

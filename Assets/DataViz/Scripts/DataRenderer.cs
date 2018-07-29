@@ -30,7 +30,7 @@ public class DataRenderer : MonoBehaviour {
 			} catch (MissingReferenceException) {}
 		}
 
-		string pathString = dataLoader.paths.Keys.ToArray()[pathIndex];
+		string pathString = dataLoader.pathNameFromIndex(pathIndex);
 		DataLoader.Line path = dataLoader.paths[pathString];
 		List<DataLoader.Guess> guesses = dataLoader.guessesForPath[pathString];
 
@@ -46,6 +46,10 @@ public class DataRenderer : MonoBehaviour {
 		GameObject temp = Instantiate(pathPointPrefab, path.to, Quaternion.identity);
 		temp.GetComponent<ChangePathPointText>().ChangeText("End\n");
 		instantiatedObjects.Add(temp);
+	}
+
+	public void SaveScreenshot(int index) {
+			ScreenCapture.CaptureScreenshot("Generated/" + dataLoader.pathNameFromIndex(index) + ".png", 4);
 	}
 
 	private GameObject InstantiateLineRenderer(GameObject prefab, DataLoader.Line line) {
