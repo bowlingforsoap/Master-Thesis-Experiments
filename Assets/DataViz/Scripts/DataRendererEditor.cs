@@ -37,15 +37,15 @@ public class DataRendererEditor : Editor {
 	}
 
 	private IEnumerator AutoVisualizeAndTakeScreenshots(DataRenderer dataRenderer, DataLoader dataLoader) {
-		Debug.Log("Frame count start: " + Time.frameCount);
-		Debug.Log("Entries to log: " + dataLoader.paths.Keys.ToArray().Length);
+		/* Debug.Log("Frame count start: " + Time.frameCount);
+		Debug.Log("Entries to log: " + dataLoader.paths.Keys.ToArray().Length); */
 		int i = 0;
 		for (i = 0; i < dataLoader.paths.Keys.ToArray().Length; i++) {
 			dataRenderer.Visualize(i);
 			dataRenderer.SaveScreenshot(i);
 			yield return new WaitForSeconds(1f);	
 		}
-		Debug.Log("Entries logged: " + i);
-		Debug.Log("Frame count end: " + Time.frameCount);
+		/* Debug.Log("Entries logged: " + i);
+		Debug.Log("Frame count end: " + Time.frameCount); */
 	}
 }

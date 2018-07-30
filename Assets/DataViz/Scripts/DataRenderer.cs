@@ -11,6 +11,10 @@ public class DataRenderer : MonoBehaviour {
 	List<GameObject> instantiatedObjects;
 	public Color guessLineRendererColorStart;
 	public Color guessLineRendererColorEnd;
+	public TextMesh stats3DText;
+	public TextMesh path3DText;
+	private const string statsDefaultText = "STATS (deg.)";
+	private const string pathDefaultText = "PATH";
 
 	void Start() {
 		dataLoader = GetComponent<DataLoader>();
@@ -29,9 +33,12 @@ public class DataRenderer : MonoBehaviour {
 				Destroy(go);
 			} catch (MissingReferenceException) {}
 		}
+		// Clean stats
+		CleanStatsVisualization();
+		
 
 		string pathString = dataLoader.pathNameFromIndex(pathIndex);
-		DataLoader.Line path = dataLoader.paths[pathString];
+		DataLoader.Path path = dataLoader.paths[pathString];
 		List<DataLoader.Guess> guesses = dataLoader.guessesForPath[pathString];
 
 		// Render guesses
@@ -42,17 +49,36 @@ public class DataRenderer : MonoBehaviour {
 		// Render actual path
 		instantiatedObjects.Add(InstantiateLineRenderer(pathLineRendererPrefab, path));
 		
-		instantiatedObjects.Add(Instantiate(pathPointPrefab, path.from, Quaternion.identity));
-		GameObject temp = Instantiate(pathPointPrefab, path.to, Quaternion.identity);
-		temp.GetComponent<ChangePathPointText>().ChangeText("End\n");
+		GameObject temp;
+		temp = Instantiate(pathPointPrefab, path.from, Quaternion.identity);
+		temp.GetComponent<ChangePathPointText>().ChangeText("From\n");
 		instantiatedObjects.Add(temp);
+		temp = Instantiate(pathPointPrefab, path.to, Quaternion.identity);
+		temp.GetComponent<ChangePathPointText>().ChangeText("To\n");
+		instantiatedObjects.Add(temp);
+
+		// Render Stats
+		VisualizeStats(pathIndex);
+	}
+
+	public void VisualizeStats(int pathIndex) {
+		stats3DText.text += "\nmean: " + dataLoader.mean(pathIndex);
+		stats3DText.text += "\nsd: " + dataLoader.sd(pathIndex);
+
+		path3DText.text += "\nabbr.: " + dataLoader.GetPath(pathIndex).abbreviation;
+		path3DText.text += "\nact.: " + dataLoader.GetPath(pathIndex).fromToAngles;
+	}
+
+	public void CleanStatsVisualization() {
+		stats3DText.text = statsDefaultText;
+		path3DText.text = pathDefaultText;
 	}
 
 	public void SaveScreenshot(int index) {
 			ScreenCapture.CaptureScreenshot("Generated/" + dataLoader.pathNameFromIndex(index) + ".png", 4);
 	}
 
-	private GameObject InstantiateLineRenderer(GameObject prefab, DataLoader.Line line) {
+	private GameObject InstantiateLineRenderer(GameObject prefab, DataLoader.Path line) {
 		LineRenderer lineRenderer;
 
 		lineRenderer = Instantiate(prefab, Vector3.zero, Quaternion.identity).GetComponent<LineRenderer>();
