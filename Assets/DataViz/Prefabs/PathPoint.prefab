@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 23224562674247992}
   - component: {fileID: 136155220990386974}
   - component: {fileID: 114689000502671966}
+  - component: {fileID: 114913449288057992}
   m_Layer: 0
   m_Name: PathPoint
   m_TagString: Untagged
@@ -183,6 +184,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 137cd32c4c81a9d4ebec7b31882c76df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114913449288057992
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147958098764818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 166640621659f994e96b6aee2f59d04d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!136 &136155220990386974

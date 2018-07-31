@@ -105,7 +105,7 @@ public class DataLoader : MonoBehaviour {
 		Vector2 result = Vector2.zero;
 
 		foreach (Vector2 value in values) {
-			result += new Vector2(Mathf.Abs(value.x), Mathf.Abs(value.y));
+			result += new Vector2(value.x, value.y);
 		}
 		result /= values.Length;
 

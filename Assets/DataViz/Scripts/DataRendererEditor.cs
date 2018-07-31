@@ -8,6 +8,8 @@ using UnityEngine;
 public class DataRendererEditor : Editor {
 	private Coroutine autosaveCoroutine;
 	private int index;
+	private bool visualizeStats = false;
+
 	public override void OnInspectorGUI() {
 		base.OnInspectorGUI();
 
@@ -17,8 +19,10 @@ public class DataRendererEditor : Editor {
 		GUILayout.Label("Choose the path to visualize:");
 		index = EditorGUILayout.Popup(index, dataLoader.paths.Keys.ToArray());
 
+		visualizeStats = GUILayout.Toggle(visualizeStats, "Visualize statistics");
+
 		if (GUILayout.Button("Visualize")) {
-			dataRenderer.Visualize(index);
+			dataRenderer.Visualize(index, visualizeStats);
 		}
 
 		if (GUILayout.Button("Take Screenshot")) {
@@ -41,7 +45,7 @@ public class DataRendererEditor : Editor {
 		Debug.Log("Entries to log: " + dataLoader.paths.Keys.ToArray().Length); */
 		int i = 0;
 		for (i = 0; i < dataLoader.paths.Keys.ToArray().Length; i++) {
-			dataRenderer.Visualize(i);
+			dataRenderer.Visualize(i, visualizeStats);
 			dataRenderer.SaveScreenshot(i);
 			yield return new WaitForSeconds(1f);	
 		}

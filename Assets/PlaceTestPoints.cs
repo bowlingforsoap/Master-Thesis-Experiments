@@ -36,4 +36,8 @@ public class PlaceTestPoints : MonoBehaviour {
 
 		guessCylinder.localScale = new Vector3(guessCylinder.localScale.x*guessCylinderRadius.x,guessCylinder.localScale.y* guessCylinderRadius.y,guessCylinder.localScale.z * guessCylinderRadius.z);
 	}
+
+	public float GetRadius() {
+		return radius;
+	}
 }
