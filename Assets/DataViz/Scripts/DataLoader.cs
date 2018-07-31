@@ -101,13 +101,28 @@ public class DataLoader : MonoBehaviour {
 		return mean(values);
 	}
 
+	/// <summary>Math for mean angle computation: https://rosettacode.org/wiki/Averages/Mean_angle</summary>
 	private Vector2 mean(Vector2[] values) {
-		Vector2 result = Vector2.zero;
+		Vector2 result, resultX, resultY;
+		result = Vector2.zero;
+		resultX = Vector2.zero;
+		resultY = Vector3.zero;
 
 		foreach (Vector2 value in values) {
-			result += new Vector2(value.x, value.y);
+			// Convert to [0;360] values on the circle
+			float xAngle = value.x < 0 ? (360f + value.x) : value.x;
+			float yAngle = value.x < 0 ? (360f + value.y) : value.y;
+			// To complex numbers	
+			resultX += new Vector2(Mathf.Sin(xAngle * Mathf.PI / 180f), Mathf.Cos(xAngle * Mathf.PI / 180f));
+			resultY += new Vector2(Mathf.Sin(yAngle * Mathf.PI / 180f), Mathf.Cos(yAngle * Mathf.PI / 180f));
 		}
+		// Mean
 		result /= values.Length;
+		// Back to [0;360]
+		result = new Vector2(Mathf.Atan2(resultX.x, resultX.y) * 180f / Mathf.PI, Mathf.Atan2(resultY.x, resultY.y) * 180f / Mathf.PI);
+		// Convert back to [-180;180]
+		result.x = result.x > 180f ? result.x - 360f : result.x;
+		result.y = result.y > 180f ? result.y - 360f : result.y;  
 
 		return result;
 	}
