@@ -43,13 +43,23 @@ namespace VoxelDrawing
             Vector3 shapeBoundingBoxMin;
             Vector3 shapeBoundingBoxMax;
 
-            shapeBoundingBoxMin = Vector3.Scale(shapeBounds.min, shape.transform.localScale);
+            /* shapeBoundingBoxMin = Vector3.Scale(shapeBounds.min, shape.transform.localScale);
             shapeBoundingBoxMin = shape.transform.localRotation * shapeBoundingBoxMin;
             shapeBoundingBoxMin += shape.transform.localPosition;
 
             shapeBoundingBoxMax = Vector3.Scale(shapeBounds.max, shape.transform.localScale);
             shapeBoundingBoxMax = shape.transform.localRotation * shapeBoundingBoxMax;
-            shapeBoundingBoxMax += shape.transform.localPosition;
+            shapeBoundingBoxMax += shape.transform.localPosition; */
+
+            shapeBoundingBoxMin = ApplyTransform(shapeBounds.min, shape.transform);
+            shapeBoundingBoxMax = ApplyTransform(shapeBounds.max, shape.transform);
+            // For Blender exports:
+            //-empty_with_the_model_name_as_intended
+            //--default <- actual mesh
+            if (shape.transform.parent != null) {
+                shapeBoundingBoxMin = ApplyTransform(shapeBoundingBoxMin, shape.transform.parent);
+                shapeBoundingBoxMax = ApplyTransform(shapeBoundingBoxMax, shape.transform.parent);
+            }
 
             // Adjusted for "voxel grid"
             firstVoxelCellIndex = Utils.PositionToVoxelIndex(shapeBoundingBoxMin, voxelDrawer.voxelSize);
@@ -80,6 +90,16 @@ namespace VoxelDrawing
                 firstVoxelCellIndex.z = lastVoxelCellIndex.z;
                 lastVoxelCellIndex.z = temp;
             }
+        }
+
+        private static Vector3 ApplyTransform(Vector3 to, Transform from) {
+            Vector3 result;
+
+            result = Vector3.Scale(to, from.localScale);
+            result = from.localRotation * result;
+            result += from.localPosition;
+
+            return result;
         }
 
         private void VisualizeShapeBoundingBox()
