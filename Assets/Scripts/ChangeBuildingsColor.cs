@@ -11,14 +11,8 @@ public class ChangeBuildingsColor : MonoBehaviour {
 	void Start () {
 		// Setup materials for each color
 		materials = new Material[colors.Length];
-		// Debug
-		Dictionary<int, int> colorCounts = new Dictionary<int, int>();
 
 		for (int i = 0; i < colors.Length; i++) {
-			// Debug
-			Debug.Log(colors[i]);
-			colorCounts.Add(i, 0);
-
 			Material temp = new Material(shader);
 			temp.color = colors[i];
 			materials[i] = temp;
@@ -37,14 +31,6 @@ public class ChangeBuildingsColor : MonoBehaviour {
 
 			int randColorIndex = Random.Range(0, materials.Length);
 			child.GetComponent<MeshRenderer>().material = materials[randColorIndex];
-
-			//Debug
-			colorCounts[randColorIndex]++;
-		}
-
-		//Debug
-		foreach (var colorCount in colorCounts) {
-			Debug.Log(colorCount.Key + ": " + colorCount.Value);
 		}
 	}
 	
