@@ -2,4 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RuntimeObjExporter : MonoBehaviour {}
+public class RuntimeObjExporter : MonoBehaviour {
+	public string savingPathAndName;
+}

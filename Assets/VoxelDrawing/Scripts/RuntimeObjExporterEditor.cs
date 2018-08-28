@@ -8,20 +8,29 @@ using System.IO;
 [CustomEditor(typeof(RuntimeObjExporter))]
 public class RuntimeObjExporterEditor : Editor
 {
+    private static RuntimeObjExporter runtimeObjExporter;
+
+    void OnEnable()
+    {
+        runtimeObjExporter = (RuntimeObjExporter)target;
+    }
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
-		if (GUILayout.Button("Save Voxel Drawing")) {
-			ObjExporter.DoExportWSubmeshes();
-		}
+        if (GUILayout.Button("Save Voxel Drawing"))
+        {
+            ObjExporter.DoExportWSubmeshes();
+        }
 
-		if (GUILayout.Button("Save Voxel Drawing (No Submeshes)")) {
-			ObjExporter.DoExportWOSubmeshes();
-		}
+        if (GUILayout.Button("Save Voxel Drawing (No Submeshes)"))
+        {
+            ObjExporter.DoExportWOSubmeshes();
+        }
     }
 
-	// Adapted from Source: https://gist.github.com/MattRix/0522c27ee44c0fbbdf76d65de123eeff Author: Matt Rix	
+    // Adapted from Source: https://gist.github.com/MattRix/0522c27ee44c0fbbdf76d65de123eeff Author: Matt Rix	
 
     public class ObjExporterScript
     {
@@ -92,6 +101,8 @@ public class RuntimeObjExporterEditor : Editor
 
     public class ObjExporter : ScriptableObject
     {
+        private const string EXT = ".obj";
+
         // [MenuItem("File/Export/Wavefront OBJ")]
         public static void DoExportWSubmeshes()
         {
@@ -107,15 +118,37 @@ public class RuntimeObjExporterEditor : Editor
 
         static void DoExport(bool makeSubmeshes)
         {
+            if (runtimeObjExporter.savingPathAndName.Equals("")) {
+                Debug.Log("Didn't Export Any Meshes; Please, specify the saving path in the VoxelDrawingManager's RuntimeObjExporter!");
+                return;
+            }
+
             if (Selection.gameObjects.Length == 0)
             {
                 Debug.Log("Didn't Export Any Meshes; Nothing was selected!");
                 return;
             }
 
-			// TODO: change to current shape name
+            if (Selection.gameObjects[0].transform.childCount == 0) {
+                Debug.Log("Didn't Export Any Meshes; No voxels were drawn! Did you select the correct object?");
+                return;
+            }
+
+            // TODO: change to current shape name
             string meshName = Selection.gameObjects[0].name;
-            string fileName = EditorUtility.SaveFilePanel("Export .obj file", "", meshName, "obj");
+
+            int count = 1;
+            string fileName;
+            while (true)
+            {
+                if (System.IO.File.Exists(runtimeObjExporter.savingPathAndName + count + EXT))
+                {
+                    count++;
+                } else {
+                    fileName = runtimeObjExporter.savingPathAndName + count + EXT;
+                    break;
+                }
+            }
 
             ObjExporterScript.Start();
 
