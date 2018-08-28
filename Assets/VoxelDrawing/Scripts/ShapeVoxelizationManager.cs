@@ -137,8 +137,11 @@ namespace VoxelDrawing
 
         private IEnumerator VoxelizeShape()
         {
+
             if (!voxelizationInProcess)
             {
+                Debug.Log("Begun voxelization.");
+                
                 float voxelSize;
                 voxelSize = voxelDrawer.voxelSize;
 
@@ -163,6 +166,10 @@ namespace VoxelDrawing
                         }
                     }
                 }
+
+                Debug.Log("Finished voxelization.");
+            } else {
+                Debug.Log("Voxelization already in process!");
             }
         }
 

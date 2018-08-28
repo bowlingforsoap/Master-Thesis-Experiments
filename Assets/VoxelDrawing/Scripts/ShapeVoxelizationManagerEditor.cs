@@ -21,6 +21,7 @@ namespace VoxelDrawing
             if (GUILayout.Button("Stop Voxelization"))
             {
                 shapeVoxelizationManager.StopVoxelizeShape();
+                Debug.Log("Voxelizationg stopped!");
             }
         }
     }
