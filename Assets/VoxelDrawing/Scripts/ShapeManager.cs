@@ -43,4 +43,8 @@ public class ShapeManager : MonoBehaviour {
 	public int PrevShapeIndex() {
 		return Mathf.Abs((activeShapeIndex - 1) % (shapes.Length)); // C# modulo is a remainder apparently
 	}
+
+	public GameObject GetActiveShape() {
+		return shapes[activeShapeIndex];
+	}
 }

@@ -4,4 +4,5 @@ using UnityEngine;
 
 public class RuntimeObjExporter : MonoBehaviour {
 	public string savingPathAndName;
+	public ShapeManager shapeManager;
 }

@@ -135,19 +135,21 @@ public class RuntimeObjExporterEditor : Editor
             }
 
             // TODO: change to current shape name
-            string meshName = Selection.gameObjects[0].name;
+            string meshName = runtimeObjExporter.shapeManager.GetActiveShape().name;
+            Debug.Log("meshName: " + meshName);
 
             int count = 1;
             string fileName;
             while (true)
             {
-                if (System.IO.File.Exists(runtimeObjExporter.savingPathAndName + count + EXT))
+                fileName = ConstructModelFileName(meshName, count);
+                if (System.IO.File.Exists(fileName))
                 {
                     count++;
-                } else {
-                    fileName = runtimeObjExporter.savingPathAndName + count + EXT;
-                    break;
+                    continue;
                 }
+
+                break;
             }
 
             ObjExporterScript.Start();
@@ -212,6 +214,11 @@ public class RuntimeObjExporterEditor : Editor
             {
                 sw.Write(s);
             }
+        }
+
+        /// <summary>count - number of files with the same name already in the directory.</summary>
+        static string ConstructModelFileName(string meshName, int count) {
+            return runtimeObjExporter.savingPathAndName + count + "_" + meshName + EXT;
         }
     }
 }
