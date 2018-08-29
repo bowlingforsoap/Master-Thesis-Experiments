@@ -179,6 +179,8 @@ public class RuntimeObjExporterEditor : Editor
 
             ObjExporterScript.End();
             Debug.Log("Exported Mesh: " + fileName);
+
+            runtimeObjExporter.SetShapeSaved(true);
         }
 
         static string ProcessTransform(Transform t, bool makeSubmeshes)
