@@ -5,8 +5,10 @@ using UnityEngine;
 public class ShapeManager : MonoBehaviour {
 	[Tooltip("Automatically set on Start from the child GameObjects. The first one is set active, others - diactivated.")]
 	public GameObject[] shapes;
+	public RuntimeObjExporter runtimeObjExporter;
 	
 	private int activeShapeIndex = 0;
+	
 
 	void Start() {
 		shapes = new GameObject[transform.childCount];

@@ -169,6 +169,14 @@ namespace VoxelDrawing
             return erased;
         }
 
+        public void EraseAllVoxels() {
+            Vector3[] keys = new Vector3[voxelData.Keys.Count];
+            voxelData.Keys.CopyTo(keys, 0);
+            for (int i = 0; i < keys.Length; i++) {
+                EraseVoxel(keys[i]);
+            }
+        }
+
         public static VoxelDrawer GetVoxelDrawer()
         {
             return voxelDrawer;
