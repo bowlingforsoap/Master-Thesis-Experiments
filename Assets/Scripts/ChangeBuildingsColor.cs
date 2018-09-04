@@ -29,8 +29,10 @@ public class ChangeBuildingsColor : MonoBehaviour {
 				continue;
 			}
 
-			int randColorIndex = Random.Range(0, materials.Length);
-			child.GetComponent<MeshRenderer>().material = materials[randColorIndex];
+			if (child.gameObject.active) {
+				int randColorIndex = Random.Range(0, materials.Length);
+				child.GetComponent<MeshRenderer>().material = materials[randColorIndex];
+			}
 		}
 	}
 	

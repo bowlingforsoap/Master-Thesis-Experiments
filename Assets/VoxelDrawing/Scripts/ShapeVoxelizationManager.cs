@@ -28,6 +28,7 @@ namespace VoxelDrawing
         {
             voxelDrawer = VoxelDrawer.GetVoxelDrawer();
 
+            Debug.Log("Setting bounds for shape: " + shape.name);
             SetShapeBounds();
             VisualizeShapeBoundingBox();
 
@@ -53,12 +54,17 @@ namespace VoxelDrawing
 
             shapeBoundingBoxMin = ApplyTransform(shapeBounds.min, shape.transform);
             shapeBoundingBoxMax = ApplyTransform(shapeBounds.max, shape.transform);
-            // For Blender exports:
-            //-empty_with_the_model_name_as_intended
-            //--default <- actual mesh
+            // For cases when the GameObject with MeshRenderer has parents, which are transformed
             if (shape.transform.parent != null) {
-                shapeBoundingBoxMin = ApplyTransform(shapeBoundingBoxMin, shape.transform.parent);
-                shapeBoundingBoxMax = ApplyTransform(shapeBoundingBoxMax, shape.transform.parent);
+                Transform parent = shape.transform.parent;
+                while (parent != null) {
+                    Debug.Log("Parent name: " + parent.name);
+
+                    shapeBoundingBoxMin = ApplyTransform(shapeBoundingBoxMin, parent);
+                    shapeBoundingBoxMax = ApplyTransform(shapeBoundingBoxMax, parent);
+
+                    parent = parent.parent;
+                }
             }
 
             // Adjusted for "voxel grid"
@@ -114,6 +120,8 @@ namespace VoxelDrawing
             pointsToVisualize[5] = new Vector3(lastVoxelCellIndex.x, lastVoxelCellIndex.y, firstVoxelCellIndex.z);
             pointsToVisualize[6] = new Vector3(lastVoxelCellIndex.x, firstVoxelCellIndex.y, lastVoxelCellIndex.z);
             pointsToVisualize[7] = lastVoxelCellIndex;
+
+            // pointsToVisualize[8] = shape.GetComponent<Renderer>().bounds.center;
 
             foreach (Vector3 point in pointsToVisualize)
             {

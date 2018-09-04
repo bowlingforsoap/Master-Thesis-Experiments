@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ShapeManager : MonoBehaviour {
 	[Tooltip("Automatically set on Start from the child GameObjects. The first one is set active, others - diactivated.")]
@@ -20,7 +21,9 @@ public class ShapeManager : MonoBehaviour {
 			child.SetActive(false);
 		}
 		
-		ActivateShape(activeShapeIndex);
+		try {
+			ActivateShape(activeShapeIndex);
+		} catch (Exception e) {}
 	}
 
 	/* public int ChangeShape() {
