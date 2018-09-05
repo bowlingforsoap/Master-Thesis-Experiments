@@ -4,13 +4,14 @@ using UnityEngine;
 using System;
 
 public class SoundSourceTranslationController : MonoBehaviour {
-	public GameObject soundSource;
 	public float soundSourceSpeed;
 	public Transform center;
 	public Transform leftFront, rightFront, leftBack, rightBack;//, left, right, front, back;
 	public GameObject soundSourcePrefab;
 	public GameObject campus;
 
+	[SerializeField]
+	private GameObject soundSource;
 	[SerializeField]
 	private Coroutine currentCoroutine;
 	[SerializeField]
@@ -56,15 +57,24 @@ public class SoundSourceTranslationController : MonoBehaviour {
 		
 		from = soundSource.transform.position;
 
-		Vector2 soundSourceCenter2D = Vector3ToVector2(GetGameObjectCenterInScene(soundSource));
-		Debug.Log("Sound source center: " + soundSourceCenter2D);
+		to = Vector2ToVector3(rectangleCorners[0]) + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
+		
+		/* // Debug.Log("Sound source center: " + soundSourceCenter2D);
 		Debug.Log("Rectangle corner: " + rectangleCorners[0]);
-		Debug.Log("Actually translating to: " + (rectangleCorners[0] - soundSourceCenter2D));
+		Debug.Log("Actually translating to: " + to);
+		
+		Debugger.InstantiateAt(Vector3.zero, "------------");
+		// Debugger.InstantiateAt(Vector2ToVector3(soundSourceCenter2D), "soundSource");
+		Debugger.InstantiateAt(center.position, "center");
+		Debugger.InstantiateAt(Vector2ToVector3(rectangleCorners[0]), "rectangleCorners[0]");
+		Debugger.InstantiateAt(to, "final to");
 
-		to = Vector2ToVector3(rectangleCorners[0] - soundSourceCenter2D); // ComputeRandomTranslation(from)
+		Debugger.ConnectIntantiatedGameObjects(); */
 		
 		StartTranslateSoundSource(from, to);
 	}
+
+	
 
     private void AttachSoundSource(GameObject randomBuilding)
     {
