@@ -66,6 +66,19 @@ public class Utils
         return sb.ToString();
     }
 
+    public static List<RaycastHit> IterativelyRaycast(Vector3 origin, Vector3 direction, float maxDistance, int layerMask) {
+        List<RaycastHit> raycastHits = new List<RaycastHit>();
+
+        RaycastHit hit;
+        while (Physics.Raycast(origin, direction, out hit, maxDistance)) {
+            raycastHits.Add(hit);
+            
+            Vector3 newOrigin = hit.point;
+        }
+
+        return raycastHits;
+    }
+
 	// Adopted from: https://stackoverflow.com/a/37406831 Author: Drew Noakes
     public struct LineSegment2f
     {
