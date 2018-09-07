@@ -10,8 +10,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     public Transform leftFront, rightFront, leftBack, rightBack;//, left, right, front, back;
     public GameObject soundSourcePrefab;
     public GameObject campus;
-    public LayerMask playerLayerMask;
-    public LayerMask translationPathCubeMask;
+    public LayerMask randomBuildingTranslationLayer;
 
     [SerializeField]
     private GameObject soundSource;
@@ -105,7 +104,7 @@ public class SoundSourceTranslationController : MonoBehaviour
         Vector3 actualBuildingCenter = GetGameObjectCenterInScene(soundSource);
         Debugger.InstantiateHierarchyDelimiter("------------");
         Debugger.InstantiateEmptyAt(actualBuildingCenter, "building");
-        Nullable<Vector3> randTranslationDestination = ChooseRandomTranslationDestination(actualBuildingCenter, playerLayerMask);
+        Nullable<Vector3> randTranslationDestination = ChooseRandomTranslationDestination(actualBuildingCenter, randomBuildingTranslationLayer);
         // Adjust for incorrect origins the buildings in the Campus model have
         to = randTranslationDestination.Value + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
 
@@ -147,8 +146,17 @@ public class SoundSourceTranslationController : MonoBehaviour
             translationDirection = translationDirectionsPoolList[randomIndex];
 
 			RaycastHit hit;
-            while (Physics.Raycast(origin, translationDirection, out hit, 1000f))//, translationPathCubeMask)) // we want to get all intersection with the PathCube
+            while (Physics.Raycast(origin, translationDirection, out hit, 1000f, layerMask)) // we want to get all intersection with the PathCube
             {
+				/* Debug.Log("playerLayerMask: " + playerLayerMask);
+				Debug.Log("translationPathCubeMask: " + translationPathCubeMask);
+				Debug.Log("hit.collider.gameObject.layer: " + hit.collider.gameObject.layer);
+				Debug.Log("1 << hit.collider.gameObject.layer: " + (1 << hit.collider.gameObject.layer)); */
+				if (hit.transform.tag == "Player") { // if we hit the sphere around the sphere, discard this direction vector
+					raycastHitPoints = new List<Vector3>();
+					break;
+				}
+
                 Debug.DrawRay(origin, translationDirection * hit.distance, Color.red, 10f);
 
                 origin = hit.point + translationDirection; // new origin == hit point + small offset, otherwise the the outward facing face is hit again (I think)
@@ -171,42 +179,7 @@ public class SoundSourceTranslationController : MonoBehaviour
 				Debug.Log("Found " + raycastHitPoints.Count + " intersections");
                 break;
             }
-            /* if (raycastHits.Count == 0)
-            {
-                try
-                {
-                    translationDirectionsPoolList.RemoveAt(randomIndex);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    break;
-                }
-
-                continue;
-            }
-
-            if (raycastHits.Count == 1)
-            {
-                translationDestination = raycastHits[0].point;
-
-                Debugger.InstantiateEmptyAt(translationDestination.Value, "only one hit");
-
-                break;
-            }
-            else if (raycastHits.Count >= 2)
-            {
-                translationDestination = raycastHits[UnityEngine.Random.Range(0, raycastHits.Count)].point;
-
-                for (int i = 0; i < raycastHits.Count; i++)
-                {
-                    Debugger.InstantiateEmptyAt(raycastHits[i].point, "hit " + i);
-                }
-
-
-                break;
-            } */
         }
-        // Debugger.ConnectIntantiatedGameObjects(true);
 
         translationDestination = raycastHitPoints[UnityEngine.Random.Range(0, raycastHitPoints.Count)];
 
