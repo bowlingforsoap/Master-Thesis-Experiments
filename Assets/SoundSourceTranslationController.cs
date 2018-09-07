@@ -9,6 +9,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     public Transform center;
     public Transform leftFront, rightFront, leftBack, rightBack;//, left, right, front, back;
     public GameObject soundSourcePrefab;
+	public GameObject sphereCollider;
     public GameObject campus;
     public LayerMask randomBuildingTranslationLayer;
 
@@ -144,22 +145,21 @@ public class SoundSourceTranslationController : MonoBehaviour
         {
             int randomIndex = UnityEngine.Random.Range(0, translationDirectionsPoolList.Count);
             translationDirection = translationDirectionsPoolList[randomIndex];
+			Vector3 tempOrigin = origin;
 
 			RaycastHit hit;
-            while (Physics.Raycast(origin, translationDirection, out hit, 1000f, layerMask)) // we want to get all intersection with the PathCube
+            while (Physics.Raycast(tempOrigin, translationDirection, out hit, 1000f, layerMask)) // usually, the ray would intersect the wall in 2 places
             {
-				/* Debug.Log("playerLayerMask: " + playerLayerMask);
-				Debug.Log("translationPathCubeMask: " + translationPathCubeMask);
-				Debug.Log("hit.collider.gameObject.layer: " + hit.collider.gameObject.layer);
-				Debug.Log("1 << hit.collider.gameObject.layer: " + (1 << hit.collider.gameObject.layer)); */
+				Debug.Log("translationDirection: " + translationDirection);
+
 				if (hit.transform.tag == "Player") { // if we hit the sphere around the sphere, discard this direction vector
 					raycastHitPoints = new List<Vector3>();
 					break;
 				}
 
-                Debug.DrawRay(origin, translationDirection * hit.distance, Color.red, 10f);
+                Debug.DrawRay(tempOrigin, translationDirection * hit.distance, Color.red, 10f);
 
-                origin = hit.point + translationDirection; // new origin == hit point + small offset, otherwise the the outward facing face is hit again (I think)
+                tempOrigin = hit.point + translationDirection; // new origin == hit point + small offset, otherwise the the outward facing face is hit again (I think)
 
                 // Debug.DrawRay(origin, translationDirection * 1000f, Color.red, 10f);
 
@@ -176,7 +176,7 @@ public class SoundSourceTranslationController : MonoBehaviour
             }
             else
             {
-				Debug.Log("Found " + raycastHitPoints.Count + " intersections");
+				// Debug.Log("Found " + raycastHitPoints.Count + " intersections");
                 break;
             }
         }
@@ -191,10 +191,26 @@ public class SoundSourceTranslationController : MonoBehaviour
         Instantiate(soundSourcePrefab, GetGameObjectCenterInScene(randomBuilding), Quaternion.identity, randomBuilding.transform);
     }
 
+	private void AttachSphereCollider(GameObject randomBuilding) 
+	{
+		Instantiate(sphereCollider, GetGameObjectCenterInScene(randomBuilding), Quaternion.identity, randomBuilding.transform);
+	}
+
+	public void DestroyChildren(GameObject randomBuilding) {
+		int childCount = randomBuilding.transform.childCount;
+		for (int i = childCount - 1; i > -1; i--) {
+			Destroy(randomBuilding.transform.GetChild(i).gameObject);
+		}
+	}
+
     private Vector3 GetGameObjectCenterInScene(GameObject go)
     {
         return go.GetComponent<Renderer>().bounds.center;
     }
+	
+	/* public GameObject GetSoundSource() {
+		return soundSource;
+	} */
 
     private static Vector2 Vector3ToVector2(Vector3 v3)
     {
@@ -233,6 +249,8 @@ public class SoundSourceTranslationController : MonoBehaviour
             StopCoroutine(currentCoroutine);
 
             StopSound();
+
+			DestroyChildren(soundSource);
         }
     }
 
@@ -260,10 +278,9 @@ public class SoundSourceTranslationController : MonoBehaviour
         }
         soundSource.transform.position = to;
 
-        // Store translation to
-        // DataCollector.StoreTranslation(toTransform, Time.unscaledTime);
-
         // StopSound();
+		
+		DestroyChildren(soundSource);
 
         currentCoroutine = null;
         Debug.Log("Finished TranslateSoundSource");
