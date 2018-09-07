@@ -14,22 +14,22 @@ public class SoundSourceTranslationController : MonoBehaviour {
 	private GameObject soundSource;
 	[SerializeField]
 	private Coroutine currentCoroutine;
-	[SerializeField]
-	private Vector2 rectangleSize;
-	[SerializeField]
-	private Vector2[] rectangleCorners = new Vector2[4];
+	// [SerializeField]
+	// private Vector2 rectangleSize;
+	// [SerializeField]
+	// private Vector2[] rectangleCorners = new Vector2[4];
 	[SerializeField]
 	private List<GameObject> buildingsInCampus;
-
+	private Vector3[] translationDirectionsPool;
 
 	void Start() {
-		rectangleSize = new Vector2 ((leftFront.position - leftBack.position).magnitude, (leftFront.position - rightFront.position).magnitude);
+		// rectangleSize = new Vector2 ((leftFront.position - leftBack.position).magnitude, (leftFront.position - rightFront.position).magnitude);
 
 		// Save rect corners as 2D points
-		rectangleCorners[0] = Vector3ToVector2(leftFront.position);
+		/* rectangleCorners[0] = Vector3ToVector2(leftFront.position);
 		rectangleCorners[1] = Vector3ToVector2(rightFront.position);
 		rectangleCorners[2] = Vector3ToVector2(rightBack.position);
-		rectangleCorners[3] = Vector3ToVector2(leftBack.position);
+		rectangleCorners[3] = Vector3ToVector2(leftBack.position); */
 
 		// Find all buildings in campus model
 		int modelsInCampus = campus.transform.childCount;
@@ -44,6 +44,8 @@ public class SoundSourceTranslationController : MonoBehaviour {
 				buildingsInCampus.Add(model.gameObject);
 			}
 		}
+
+		GenerateTranlsationDirectionsPool();
 	}
 
 	public void RandomlyTranslateRandomBuilding() {
@@ -57,7 +59,7 @@ public class SoundSourceTranslationController : MonoBehaviour {
 		
 		from = soundSource.transform.position;
 
-		to = Vector2ToVector3(rectangleCorners[0]) + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
+		to = leftFront.position + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
 		
 		/* // Debug.Log("Sound source center: " + soundSourceCenter2D);
 		Debug.Log("Rectangle corner: " + rectangleCorners[0]);
@@ -74,7 +76,34 @@ public class SoundSourceTranslationController : MonoBehaviour {
 		StartTranslateSoundSource(from, to);
 	}
 
-	
+	// Generates 100 evenly spaced direction vectors, 25 in each individual (N, E, W, S) direction
+	private void GenerateTranlsationDirectionsPool() {
+		translationDirectionsPool = new Vector3[100];
+
+		Vector3 start = new Vector3(1f, 0f, 0f);
+		Vector3 end = new Vector3(0f, 0f, 1f);
+		float t = 1f / 26f;
+		for (int i = 0; i < 25; i++) {
+			translationDirectionsPool[i] = Vector3.Lerp(start, end, t * i).normalized;
+		}
+
+		Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+		for (int i = 0; i < 25; i++) {
+			translationDirectionsPool[i + 25] = rotation * translationDirectionsPool[i];
+		}
+
+		rotation = Quaternion.Euler(0f, 180f, 0f);
+		for (int i = 0; i < 25; i++) {
+			translationDirectionsPool[i + 50] = rotation * translationDirectionsPool[i];
+		}
+
+		rotation = Quaternion.Euler(0f, 270f, 0f);
+		for (int i = 0; i < 25; i++) {
+			translationDirectionsPool[i + 75] = rotation * translationDirectionsPool[i];
+		}
+
+		// Debug.Log("Tranlsation Directions' Pool: " + Utils.ArrayToString<Vector3>(translationDirectionsPool));
+	}
 
     private void AttachSoundSource(GameObject randomBuilding)
     {
@@ -92,30 +121,10 @@ public class SoundSourceTranslationController : MonoBehaviour {
 	private static Vector3 Vector2ToVector3(Vector2 v2) {
 		return new Vector3(v2.x, 0f, v2.y);
 	}
-
-    /* private Vector3 ComputeRandomTranslation(Vector3 from) {
-		Vector3 to;
-
-		// Generate random translation length multiplier
-		float translationLengthMultiplier = UnityEngine.Random.Range(0f, 1f);
-		translationLengthMultiplier = 1.5f * translationLengthMultiplier - 0.5f * translationLengthMultiplier;
-
-		to = TranslateAlongRect(from, translationLengthMultiplier);
-
-		return to;
-	}
-
-	private Vector3 TranslateAlongRect(Vector3 from, float translationDistance) {
-		
-	} */
 	
 	private GameObject SelectRandomBuilding() {
 		return buildingsInCampus[UnityEngine.Random.Range(0, buildingsInCampus.Count)];
 	}
-
-	/* private Vector3 ProjectOntoRectangle(Vector3 point) {
-		
-	} */
 
 	public void PositionSoundSource(Vector3 at) {
 		soundSource.transform.position = at;

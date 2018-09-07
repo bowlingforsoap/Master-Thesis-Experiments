@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 // DataCollector Utils
 public class Utils
@@ -53,6 +54,16 @@ public class Utils
     public static string PoleName(Transform pole)
     {
         return pole.parent.parent.gameObject.name;
+    }
+
+    public static string ArrayToString<T>(T[] array) {
+        StringBuilder sb = new StringBuilder();
+        
+        foreach (T t in array) {
+            sb.Append(t + " ");
+        }
+        
+        return sb.ToString();
     }
 
 	// Adopted from: https://stackoverflow.com/a/37406831 Author: Drew Noakes
