@@ -6,13 +6,14 @@ using UnityEngine.SceneManagement;
 public class LaserPointer : MonoBehaviour {
 
 	public GameObject buildingCachingController;
+	public SoundSourceTranslationController soundSourceTranslationController;
 	public GameObject rectilePrefab;
-	[SerializeField]
+	// [SerializeField]
 	private GameObject rectile;
-	private static GameObject[] guessIndicators = new GameObject[2];
+	// private static GameObject[] guessIndicators = new GameObject[2];
 	private bool allowSelection = true;
-	public Material guessMaterial1;
-	public Material guessMaterial2;
+	public Material guessIndicatorMaterial;
+	// public Material guessMaterial2;
 
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
@@ -21,11 +22,11 @@ public class LaserPointer : MonoBehaviour {
     }
 
     public GameObject laserPrefab;
-    [SerializeField]
+    // [SerializeField]
 	private GameObject laser;
     private Transform laserTransform;
     private Vector3 hitPoint;
-	[SerializeField]
+	// [SerializeField]
 	private float hitDistance;
 	private const float maxHitDistance = 200f;
     public LayerMask raycastMask;
@@ -47,12 +48,12 @@ public class LaserPointer : MonoBehaviour {
 		rectile = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
 		rectile.SetActive(false);
 
-		guessIndicators[0] = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
+		/* guessIndicators[0] = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
 		guessIndicators[0].GetComponent<MeshRenderer>().material = guessMaterial1;
 		guessIndicators[0].SetActive(false);
 		guessIndicators[1] = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
 		guessIndicators[1].GetComponent<MeshRenderer>().material = guessMaterial2;
-		guessIndicators[1].SetActive(false);
+		guessIndicators[1].SetActive(false); */
     }
 	
 	// Update is called once per frame
@@ -65,18 +66,20 @@ public class LaserPointer : MonoBehaviour {
 				// Show laser
 				if (Controller.GetTouch(SteamVR_Controller.ButtonMask.Axis0)) // Joystick/Touchpad touch
 				{
-					Debug.Log("Joystick/Touchpad touch");
+					// Debug.Log("Joystick/Touchpad touch");
 					
 					if (hitSomething)
 					{
 						hitPoint = hit.point;
 						hitDistance = hit.distance;
 						
+						// TODO: remove
 						ShowRectile(hit.point);
 					} else {
 						hitPoint = buildingCachingController.transform.position + buildingCachingController.transform.forward * maxHitDistance;
 						hitDistance = maxHitDistance;
 						
+						// TODO: remove
 						HideRectile();
 					}
 
@@ -92,7 +95,18 @@ public class LaserPointer : MonoBehaviour {
 				{
 					if (hitSomething)
 					{
-						DataCollector.StoreGuess(hit.point, Time.unscaledTime);
+						// Store correct guess
+						// ...
+
+						StartCoroutine(IndicateCorrectGuess(hit.collider.gameObject));
+						
+					}
+					else
+					{
+						// Store false guess
+						// ...
+						
+						// StartCoroutine(IndicateIncorrectGuess(hit.collider.gameObject));
 					}
 				}
 			}
@@ -106,7 +120,7 @@ public class LaserPointer : MonoBehaviour {
 
 			if (buildingCachingController.activeSelf)
 			{
-				Debug.Log("Building Catching Controller became active!");
+				// Debug.Log("Building Catching Controller became active!");
 				controllerActive = true;
 			}
 			else 
@@ -139,14 +153,32 @@ public class LaserPointer : MonoBehaviour {
 		laser.SetActive(false);
 	}
 
-	public static void PlaceGuessIndicator(int guessIndicator, Vector3 point) {
-		guessIndicators[guessIndicator].transform.position = point;
-		guessIndicators[guessIndicator].SetActive(true);
+	private IEnumerator IndicateCorrectGuess(GameObject go) {
+		soundSourceTranslationController.StopTranslation(destroyChildren: false);
+		
+		MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+		meshRenderer.material = guessIndicatorMaterial;
+		meshRenderer.enabled = true;
+		yield return new WaitForSeconds(1f);
+		if (meshRenderer != null) {
+			meshRenderer.enabled = false;
+		}
+
+		soundSourceTranslationController.DestroyChildren(go.transform.parent.parent.gameObject);
 	}
 
-	public static IEnumerator HideGuessesIndicator() {
+	private IEnumerator IndicateIncorrectGuess(GameObject go) {
+		yield return null;
+	}
+
+	/* public static void PlaceGuessIndicator(int guessIndicator, Vector3 point) {
+		guessIndicators[guessIndicator].transform.position = point;
+		guessIndicators[guessIndicator].SetActive(true);
+	} */
+
+	/* public static IEnumerator HideGuessesIndicator() {
 		yield return new WaitForSeconds(.3f); 
 		guessIndicators[0].SetActive(false);
 		guessIndicators[1].SetActive(false);
-	}
+	} */
 }

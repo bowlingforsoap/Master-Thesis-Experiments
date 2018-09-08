@@ -85,7 +85,7 @@ public class DataCollector : MonoBehaviour
 			return;
 		} */
 
-		if (guess != null && actualTranslation != null && guess.from != Vector3.zero && guess.to != Vector3.zero && actualTranslation.from != Vector3.zero && actualTranslation.to != Vector3.zero)
+		/* if (guess != null && actualTranslation != null && guess.from != Vector3.zero && guess.to != Vector3.zero && actualTranslation.from != Vector3.zero && actualTranslation.to != Vector3.zero)
         {
             LogPrevTranslationAndGuess();
 
@@ -96,7 +96,7 @@ public class DataCollector : MonoBehaviour
             
             dataCollector.StartCoroutine(LaserPointer.HideGuessesIndicator());
             ClearCurrentAnswer();
-        }
+        } */
     }
 
     private static void LogPrevTranslationAndGuess()
@@ -135,7 +135,7 @@ public class DataCollector : MonoBehaviour
 
     public static void StoreGuess(Vector3 point, float time)
     {
-        if (guess != null && guess.from == Vector3.zero)
+        /* if (guess != null && guess.from == Vector3.zero)
         {
             LaserPointer.PlaceGuessIndicator(0, point);
 
@@ -146,7 +146,7 @@ public class DataCollector : MonoBehaviour
             LaserPointer.PlaceGuessIndicator(1, point);
 
             StoreGuessTo(point, time);
-        }
+        } */
     }
 
 	public static void StoreTranslation(Transform transform, float time) {

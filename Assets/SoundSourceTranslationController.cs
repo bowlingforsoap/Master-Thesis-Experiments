@@ -12,6 +12,14 @@ public class SoundSourceTranslationController : MonoBehaviour
 	public GameObject sphereCollider;
     public GameObject campus;
     public LayerMask randomBuildingTranslationLayer;
+    public LayerMask movingBuildingLayer;
+
+    public GameObject SoundSource {
+        get 
+        {
+            return soundSource;
+        }
+    }
 
     [SerializeField]
     private GameObject soundSource;
@@ -27,14 +35,6 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     void Start()
     {
-        /* Debugger.InstantiateHierarchyDelimiter("-------------");
-        Debugger.InstantiateEmptyAt(leftFront.position, "lf");
-        Debugger.InstantiateEmptyAt(rightFront.position, "rf");
-        Debugger.InstantiateEmptyAt(rightBack.position, "rb");
-        Debugger.InstantiateEmptyAt(leftBack.position, "lb");
-        Debugger.InstantiateEmptyAt(leftFront.position, "lf");
-        Debugger.ConnectIntantiatedGameObjects(true); */
-
         // Find all buildings in campus model
         int modelsInCampus = campus.transform.childCount;
         for (int i = 0; i < modelsInCampus; i++)
@@ -97,28 +97,15 @@ public class SoundSourceTranslationController : MonoBehaviour
         GameObject randomBuilding = SelectRandomBuilding();
 
         AttachSoundSource(randomBuilding);
+        AttachSphereCollider(randomBuilding);
         soundSource = randomBuilding;
 
         from = soundSource.transform.position;
 
         Vector3 actualBuildingCenter = GetGameObjectCenterInScene(soundSource);
-        Debugger.InstantiateHierarchyDelimiter("------------");
-        Debugger.InstantiateEmptyAt(actualBuildingCenter, "building");
         Nullable<Vector3> randTranslationDestination = ChooseRandomTranslationDestination(actualBuildingCenter, randomBuildingTranslationLayer);
         // Adjust for incorrect origins the buildings in the Campus model have
         to = randTranslationDestination.Value + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
-
-        /* // Debug.Log("Sound source center: " + soundSourceCenter2D);
-		Debug.Log("Rectangle corner: " + rectangleCorners[0]);
-		Debug.Log("Actually translating to: " + to);
-		
-		Debugger.InstantiateAt(Vector3.zero, "------------");
-		// Debugger.InstantiateAt(Vector2ToVector3(soundSourceCenter2D), "soundSource");
-		Debugger.InstantiateAt(center.position, "center");
-		Debugger.InstantiateAt(Vector2ToVector3(rectangleCorners[0]), "rectangleCorners[0]");
-		Debugger.InstantiateAt(to, "final to");
-
-		Debugger.ConnectIntantiatedGameObjects(); */
 
         StartTranslateSoundSource(from, to);
     }
@@ -190,9 +177,26 @@ public class SoundSourceTranslationController : MonoBehaviour
         Instantiate(soundSourcePrefab, GetGameObjectCenterInScene(randomBuilding), Quaternion.identity, randomBuilding.transform);
     }
 
-	private void AttachSphereCollider(GameObject randomBuilding) 
+	public void AttachSphereCollider(GameObject randomBuilding) 
 	{
-		Instantiate(sphereCollider, GetGameObjectCenterInScene(randomBuilding), Quaternion.identity, randomBuilding.transform);
+        Bounds randomBuildingRenderBounds = GetGameObjectRenderBounds(randomBuilding);
+
+		GameObject collider = Instantiate(sphereCollider, randomBuildingRenderBounds.center, Quaternion.identity, randomBuilding.transform);
+        
+        // Change collider scale
+        collider.transform.localScale = Vector3.one * 
+            Mathf.Max(
+                Vector3.Distance(randomBuildingRenderBounds.center, randomBuildingRenderBounds.max), 
+                Vector3.Distance(randomBuildingRenderBounds.center, randomBuildingRenderBounds.min
+            )
+        );
+
+        // Change render layer
+        int layerMaskEditor = (int)Mathf.Log(movingBuildingLayer.value, 2);
+        collider.layer = layerMaskEditor;
+        foreach (Transform t in collider.GetComponentInChildren<Transform>()) {            
+            t.gameObject.layer = layerMaskEditor;
+        }
 	}
 
 	public void DestroyChildren(GameObject randomBuilding) {
@@ -204,7 +208,11 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     private Vector3 GetGameObjectCenterInScene(GameObject go)
     {
-        return go.GetComponent<Renderer>().bounds.center;
+        return GetGameObjectRenderBounds(go).center;
+    }
+
+    private Bounds GetGameObjectRenderBounds(GameObject go) {
+        return go.GetComponent<Renderer>().bounds;
     }
 	
 	/* public GameObject GetSoundSource() {
@@ -241,7 +249,7 @@ public class SoundSourceTranslationController : MonoBehaviour
         StartTranslateSoundSource(soundSource.transform.position, to);
     }
 
-    public void StopTranslation()
+    public void StopTranslation(bool destroyChildren)
     {
         if (currentCoroutine != null)
         {
@@ -249,7 +257,10 @@ public class SoundSourceTranslationController : MonoBehaviour
 
             StopSound();
 
-			DestroyChildren(soundSource);
+            if (destroyChildren) 
+            {
+			    DestroyChildren(soundSource);
+            }
         }
     }
 

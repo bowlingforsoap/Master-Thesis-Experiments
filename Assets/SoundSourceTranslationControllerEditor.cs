@@ -14,7 +14,7 @@ public class SoundSourceTranslationControllerEditor : Editor
         SoundSourceTranslationController controller = (SoundSourceTranslationController)target;
 
         if (GUILayout.Button("Randomly Translate Random Building")) {
-            controller.StopTranslation(); // stop previous translation, if in progress
+            controller.StopTranslation(destroyChildren: true); // stop previous translation, if in progress
 
             controller.RandomlyTranslateRandomBuilding();
         }
@@ -69,7 +69,7 @@ public class SoundSourceTranslationControllerEditor : Editor
         // GUILayout.Label("\nStop:");
         if (GUILayout.Button("Stop Translation"))
         {
-            controller.StopTranslation();
+            controller.StopTranslation(destroyChildren: true);
         } 
     }
 
