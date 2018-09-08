@@ -25,7 +25,6 @@ public class SoundSourceTranslationController : MonoBehaviour
     private List<GameObject> buildingsInCampus;
     private Vector3[] translationDirectionsPool;
 
-
     void Start()
     {
         /* Debugger.InstantiateHierarchyDelimiter("-------------");
@@ -47,7 +46,7 @@ public class SoundSourceTranslationController : MonoBehaviour
                 continue;
             }
 
-            if (model.gameObject.active)
+            if (model.gameObject.activeSelf)
             {
                 buildingsInCampus.Add(model.gameObject);
             }

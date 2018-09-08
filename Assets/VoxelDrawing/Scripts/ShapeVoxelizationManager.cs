@@ -28,7 +28,7 @@ namespace VoxelDrawing
         {
             voxelDrawer = VoxelDrawer.GetVoxelDrawer();
 
-            Debug.Log("Setting bounds for shape: " + shape.name);
+            // Debug.Log("Setting bounds for shape: " + shape.name);
             SetShapeBounds();
             VisualizeShapeBoundingBox();
 
@@ -58,7 +58,7 @@ namespace VoxelDrawing
             if (shape.transform.parent != null) {
                 Transform parent = shape.transform.parent;
                 while (parent != null) {
-                    Debug.Log("Parent name: " + parent.name);
+                    // Debug.Log("Parent name: " + parent.name);
 
                     shapeBoundingBoxMin = ApplyTransform(shapeBoundingBoxMin, parent);
                     shapeBoundingBoxMax = ApplyTransform(shapeBoundingBoxMax, parent);

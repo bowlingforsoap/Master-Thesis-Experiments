@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class LaserPointer : MonoBehaviour {
 
+	public GameObject buildingCachingController;
 	public GameObject rectilePrefab;
 	[SerializeField]
 	private GameObject rectile;
@@ -29,13 +30,18 @@ public class LaserPointer : MonoBehaviour {
 	private const float maxHitDistance = 200f;
     public LayerMask raycastMask;
 
+	private bool controllerActive = false;
+
     void Awake () {
-        trackedObj = GetComponent<SteamVR_TrackedObject>();
+
 	}
 
     void Start()
     {
-        laser = Instantiate(laserPrefab);
+        trackedObj = buildingCachingController.GetComponent<SteamVR_TrackedObject>();
+		StartCoroutine(WaitUntilTheControllerIsActive());
+        
+		laser = Instantiate(laserPrefab);
         laserTransform = laser.transform;
 
 		rectile = Instantiate(rectilePrefab, Vector3.zero, Quaternion.identity);
@@ -51,48 +57,65 @@ public class LaserPointer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-			
-			RaycastHit hit;
-			bool hitSomething = Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, maxHitDistance, raycastMask);
-			
-			// Show laser
-			if (Controller.GetTouch(SteamVR_Controller.ButtonMask.Axis0)) // Joystick touch
+			if (controllerActive) 
 			{
+				RaycastHit hit;
+				bool hitSomething = Physics.Raycast(trackedObj.transform.position, buildingCachingController.transform.forward, out hit, maxHitDistance, raycastMask);
 				
-				if (!hitSomething)
+				// Show laser
+				if (Controller.GetTouch(SteamVR_Controller.ButtonMask.Axis0)) // Joystick/Touchpad touch
 				{
-					hitPoint = transform.position + transform.forward * maxHitDistance;
-					hitDistance = maxHitDistance;
+					Debug.Log("Joystick/Touchpad touch");
 					
-					HideRectile();
+					if (hitSomething)
+					{
+						hitPoint = hit.point;
+						hitDistance = hit.distance;
+						
+						ShowRectile(hit.point);
+					} else {
+						hitPoint = buildingCachingController.transform.position + buildingCachingController.transform.forward * maxHitDistance;
+						hitDistance = maxHitDistance;
+						
+						HideRectile();
+					}
+
+					ShowLaser();
 				} else {
-					hitPoint = hit.point;
-					hitDistance = hit.distance;
-					
-					ShowRectile(hit.point);
+					HideLaser();
+					HideRectile();
 				}
+				
 
-				ShowLaser();
-			} else {
-				HideLaser();
-				HideRectile();
+				if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad)) // Joystick/Touchpad press
+				// if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)) // Hair Trigger press
+				{
+					if (hitSomething)
+					{
+						DataCollector.StoreGuess(hit.point, Time.unscaledTime);
+					}
+				}
 			}
 			
+	}
 
-			if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad)) // Joystick press
-			// if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)) // Hair Trigger press
+	private IEnumerator WaitUntilTheControllerIsActive() {
+		while (true)
+		{
+			yield return null;
+
+			if (buildingCachingController.activeSelf)
 			{
-				if (hitSomething)
-				{
-					DataCollector.StoreGuess(hit.point, Time.unscaledTime);
-				}
+				Debug.Log("Building Catching Controller became active!");
+				controllerActive = true;
 			}
-				
+			else 
+			{
+				continue;
+			}
 
-			// Select ppole
-			// if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Trigger)) {
-				
-			// }
+			break;
+		}
 	}
 
 	private void ShowLaser()
