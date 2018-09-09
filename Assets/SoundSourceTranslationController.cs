@@ -11,7 +11,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     public Transform center;
     public Transform leftFront, rightFront, leftBack, rightBack;//, left, right, front, back;
     public GameObject soundSourcePrefab;
-    public GameObject sphereCollider;
+    public GameObject buildingColliderPrefab;
     public GameObject campus;
     public LayerMask randomBuildingTranslationLayer;
     public LayerMask movingBuildingLayer;
@@ -102,6 +102,8 @@ public class SoundSourceTranslationController : MonoBehaviour
 
             if (currentTranslationCoroutine == null && laserPointer.Ready && voxelDrawer.Ready)
             {
+                yield return new WaitForSeconds(2f);
+
                 currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
             }
         }
@@ -112,12 +114,16 @@ public class SoundSourceTranslationController : MonoBehaviour
         Vector3 from;
         Vector3 to;
 
-        GameObject randomBuilding;
+        GameObject randomBuilding = null;
         Vector3 actualBuildingCenter;
         Nullable<Vector3> randTranslationDestination;
 
         // Find the translation destination relative to soundSource render Bounds.center
         do {
+            if (randomBuilding != null) {
+                DestroyChildren(randomBuilding);
+            }
+
             randomBuilding = SelectRandomBuilding();
             
             AttachSoundSource(randomBuilding);
@@ -131,12 +137,17 @@ public class SoundSourceTranslationController : MonoBehaviour
             randTranslationDestination = ChooseRandomTranslationDestination(actualBuildingCenter, randomBuildingTranslationLayer);
             
             // Debug.Log("randTranslationDestination: " + randTranslationDestination);
+
+            if (randTranslationDestination == null) {
+                to = from; // so the distance is 0 < 150f
+                continue;
+            }
             
             // Adjust for incorrect origins the buildings in the Campus model have
             to = randTranslationDestination.Value + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
             
             yield return null;
-        } while (randTranslationDestination == null || Vector3.Distance(to, from) < 150f); // || Vector3.Distance(to, from) > 160f);
+        } while (/* randTranslationDestination == null || */ Vector3.Distance(to, from) < 150f); // || Vector3.Distance(to, from) > 160f);
 
         Debug.DrawRay(actualBuildingCenter, randTranslationDestination.Value - actualBuildingCenter, Color.red, 5f);
 
@@ -220,15 +231,16 @@ public class SoundSourceTranslationController : MonoBehaviour
     {
         Bounds randomBuildingRenderBounds = GetGameObjectRenderBounds(randomBuilding);
 
-        GameObject collider = Instantiate(sphereCollider, randomBuildingRenderBounds.center, Quaternion.identity, randomBuilding.transform);
+        GameObject collider = Instantiate(buildingColliderPrefab, randomBuildingRenderBounds.center, Quaternion.identity, randomBuilding.transform);
 
         // Change collider scale
-        collider.transform.localScale = Vector3.one *
+        Vector3 newScale = Vector3.one *
             Mathf.Max(
                 Vector3.Distance(randomBuildingRenderBounds.center, randomBuildingRenderBounds.max),
                 Vector3.Distance(randomBuildingRenderBounds.center, randomBuildingRenderBounds.min
             )
         );
+        collider.transform.localScale = newScale;
 
         // Change render layer
         int layerMaskEditor = (int)Mathf.Log(movingBuildingLayer.value, 2);
@@ -284,7 +296,7 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     public void StartTranslateSoundSource(Vector3 from, Vector3 to)
     {
-        StartCoroutine(TranslateSoundSourceCoroutine(from, to));
+        currentTranslationCoroutine = StartCoroutine(TranslateSoundSourceCoroutine(from, to));
     }
 
     public void StartTranslateSoundSource(Vector3 to)
@@ -304,12 +316,15 @@ public class SoundSourceTranslationController : MonoBehaviour
             {
                 DestroyChildren(soundSource);
             }
+            
+            currentTranslationCoroutine = null;
+            Debug.Log("Finished TranslateSoundSource");
         }
     }
 
     private IEnumerator TranslateSoundSourceCoroutine(Vector3 from, Vector3 to)
     {
-        Debug.Log("Started TranslateSoundSource: distance == " + Vector3.Distance(from, to));
+        Debug.Log("Started TranslateSoundSource"); //: distance == " + Vector3.Distance(from, to));
 
         Vector3 direction = (to - from).normalized;
 
@@ -332,12 +347,7 @@ public class SoundSourceTranslationController : MonoBehaviour
 
         soundSource.transform.position = to;
 
-        // StopSound();
-
-        DestroyChildren(soundSource);
-
-        currentTranslationCoroutine = null;
-        Debug.Log("Finished TranslateSoundSource");
+        StopTranslation(true);
     }
 
     private void PlaySound()
