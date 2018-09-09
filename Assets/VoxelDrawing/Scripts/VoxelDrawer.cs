@@ -32,6 +32,11 @@ namespace VoxelDrawing
         [SerializeField]
         private Material brushTipCenterMaterial;
 
+        private bool ready = false;
+        public bool Ready {
+            get { return ready; }
+        }
+
         private static VoxelDrawer voxelDrawer;
 
         void Awake()
@@ -104,6 +109,8 @@ namespace VoxelDrawing
             GameObject center = Instantiate(voxelPrefab, Vector3.zero, Quaternion.identity, brushTip);
             center.transform.localPosition = Vector3.zero;
             center.GetComponent<MeshRenderer>().material = brushTipCenterMaterial;
+
+            ready = true;
         }
 
         private Transform GetControllerModelTransform()

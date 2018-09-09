@@ -8,28 +8,28 @@ public class LaserPointer : MonoBehaviour {
 	public GameObject buildingCachingController;
 	public SoundSourceTranslationController soundSourceTranslationController;
 	public GameObject rectilePrefab;
-	// [SerializeField]
-	private GameObject rectile;
-	// private static GameObject[] guessIndicators = new GameObject[2];
-	private bool allowSelection = true;
+
 	public Material guessIndicatorMaterial;
-	// public Material guessMaterial2;
+    public LayerMask raycastMask;
+    public GameObject laserPrefab;
 
 	private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device Controller
     {
         get { return SteamVR_Controller.Input((int)trackedObj.index); }
     }
-
-    public GameObject laserPrefab;
-    // [SerializeField]
+	private GameObject rectile;
 	private GameObject laser;
     private Transform laserTransform;
     private Vector3 hitPoint;
-	// [SerializeField]
 	private float hitDistance;
 	private const float maxHitDistance = 200f;
-    public LayerMask raycastMask;
+
+	private bool selectionAllowed = true;
+	private bool ready = false;
+	public bool Ready {
+		get { return ready; }
+	}
 
 	private bool controllerActive = false;
 
@@ -90,7 +90,7 @@ public class LaserPointer : MonoBehaviour {
 				}
 				
 
-				if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad)) // Joystick/Touchpad press
+				if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad) && selectionAllowed) // Joystick/Touchpad press
 				// if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)) // Hair Trigger press
 				{
 					if (hitSomething)
@@ -130,6 +130,8 @@ public class LaserPointer : MonoBehaviour {
 
 			break;
 		}
+
+		ready = true;
 	}
 
 	private void ShowLaser()
@@ -159,7 +161,11 @@ public class LaserPointer : MonoBehaviour {
 		MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
 		meshRenderer.material = guessIndicatorMaterial;
 		meshRenderer.enabled = true;
+
+		selectionAllowed = false;
 		yield return new WaitForSeconds(1f);
+		selectionAllowed = true;
+
 		if (meshRenderer != null) {
 			meshRenderer.enabled = false;
 		}
