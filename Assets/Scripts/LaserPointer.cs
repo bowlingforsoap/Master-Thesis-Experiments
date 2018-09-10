@@ -127,25 +127,33 @@ public class LaserPointer : MonoBehaviour {
 		laser.SetActive(false);
 	}
 
-	private IEnumerator IndicateCorrectGuess(GameObject go) {
+	private IEnumerator IndicateCorrectGuess(GameObject collider) {
 		soundSourceTranslationController.StopTranslation(destroyChildren: false);
 		
-		MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+		MeshRenderer meshRenderer = collider.GetComponent<MeshRenderer>();
 		meshRenderer.material = guessIndicatorMaterial;
 		meshRenderer.enabled = true;
 
 		selectionAllowed = false;
 		yield return new WaitForSeconds(1f);
-		selectionAllowed = true;
 
 		if (meshRenderer != null) {
 			meshRenderer.enabled = false;
 		}
 
-		soundSourceTranslationController.DestroyChildren(go.transform.parent.parent.gameObject);
+		GameObject building = BuildingForCollider(collider);
+		soundSourceTranslationController.DestroyChildren(building);
+
+		soundSourceTranslationController.RemoveFromBuildingList(building);
+
+		selectionAllowed = true;
 	}
 
 	private IEnumerator IndicateIncorrectGuess(GameObject go) {
 		yield return null;
+	}
+
+	private GameObject BuildingForCollider(GameObject collider) {
+		return collider.transform.parent.parent.gameObject;
 	}
 }

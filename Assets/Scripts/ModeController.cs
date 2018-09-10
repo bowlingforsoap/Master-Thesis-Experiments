@@ -29,7 +29,7 @@ public class ModeController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        GoInTutorialMode();
+        // GoInTutorialMode();
     }
 
     public void GoInTutorialMode()

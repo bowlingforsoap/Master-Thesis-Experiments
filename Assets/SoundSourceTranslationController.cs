@@ -72,8 +72,6 @@ public class SoundSourceTranslationController : MonoBehaviour
         }
 
         GenerateTranlsationDirectionsPool();
-
-        StartCoroutine(RandomBuildingTranslationLoop());
     }
 
     // Generates 100 evenly spaced direction vectors, 25 in each individual (N, E, W, S) direction
@@ -379,5 +377,10 @@ public class SoundSourceTranslationController : MonoBehaviour
     private void StopSound()
     {
         soundSource.transform.GetChild(0).GetComponent<AudioSource>().Stop();
+    }
+
+    public void RemoveFromBuildingList(GameObject building) {
+        building.SetActive(false);
+        buildingsInCampus.Remove(building);
     }
 }
