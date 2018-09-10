@@ -35,6 +35,10 @@ public class SoundSourceTranslationController : MonoBehaviour
     [SerializeField]
     private List<GameObject> buildingsInCampus;
 
+    private float probability8In9 = Utils.PerSecondProbabilityOfEvents(8, 9 * 60);
+    private float probability8In10 = Utils.PerSecondProbabilityOfEvents(8, 10 * 60);
+    private int eventCounter = 0;
+
     public static GameObject[] BuildingsInCampus {
         get {
             GameObject[] buildingsInCampusArray = new GameObject[instance.buildingsInCampus.Count];
@@ -54,6 +58,9 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("probability8In10: " + probability8In10);
+        Debug.Log("probability8In9: " + probability8In9);
+        
         // Find all buildings in campus model
         int modelsInCampus = campus.transform.childCount;
         for (int i = 0; i < modelsInCampus; i++)
@@ -114,11 +121,27 @@ public class SoundSourceTranslationController : MonoBehaviour
         {
             yield return null;
 
-            if (currentTranslationCoroutine == null && laserPointer.Ready && voxelDrawer.Ready)
+            if (currentTranslationCoroutine == null /* && laserPointer.Ready && voxelDrawer.Ready */)
             {
-                yield return new WaitForSeconds(2f);
+                /* if (ModeController.TutorialMode) 
+                { */
+                    // yield return new WaitForSeconds(60f);
+                /* }
+                else
+                { */
+                    float translateBuilding = UnityEngine.Random.Range(0f, 1f);
+                    
+                    if (translateBuilding < probability8In9 * Time.deltaTime) {
+                        currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
 
-                currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
+                        Debug.Log("translateBuilding: " + translateBuilding);
+                        Debug.Log("probability8In9 * Time.deltaTime: " + probability8In9 * Time.deltaTime);
+                        Debug.Log("eventCounter: " + ++eventCounter);
+                    }
+
+                    yield return null;
+                // }
+
             }
         }
     }

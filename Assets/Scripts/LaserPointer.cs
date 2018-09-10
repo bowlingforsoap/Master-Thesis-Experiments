@@ -135,6 +135,7 @@ public class LaserPointer : MonoBehaviour {
 		meshRenderer.enabled = true;
 
 		selectionAllowed = false;
+		
 		yield return new WaitForSeconds(1f);
 
 		if (meshRenderer != null) {

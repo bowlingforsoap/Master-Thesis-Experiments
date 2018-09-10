@@ -84,4 +84,8 @@ public class Utils
 			building.gameObject.SetActive(active);
 		}
 	}
+
+    public static float PerSecondProbabilityOfEvents(int numEvents, int numSeconds) {
+        return numEvents / (float) numSeconds;
+    }
 }
