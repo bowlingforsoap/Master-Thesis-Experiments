@@ -352,8 +352,7 @@ public class SoundSourceTranslationController : MonoBehaviour
             PositionSoundSource(from);
         }
 
-        // TODO: add AudioClip to VB on the fly
-        // PlaySound(); 
+        PlaySound(); 
 
         // Store tranlation from
         // DataCollector.StoreTranslation(fromTransform, Time.unscaledTime);
@@ -371,11 +370,13 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     private void PlaySound()
     {
+        Debug.Log("#PlaySound");
         soundSource.transform.GetChild(0).GetComponent<AudioSource>().Play();
     }
 
     private void StopSound()
     {
+        Debug.Log("#StopSound");
         soundSource.transform.GetChild(0).GetComponent<AudioSource>().Stop();
     }
 
