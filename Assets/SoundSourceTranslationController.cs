@@ -34,7 +34,23 @@ public class SoundSourceTranslationController : MonoBehaviour
     // private Vector2[] rectangleCorners = new Vector2[4];
     [SerializeField]
     private List<GameObject> buildingsInCampus;
+
+    public static GameObject[] BuildingsInCampus {
+        get {
+            GameObject[] buildingsInCampusArray = new GameObject[instance.buildingsInCampus.Count];
+            instance.buildingsInCampus.CopyTo(buildingsInCampusArray, 0);
+            
+            return buildingsInCampusArray;
+        }
+    }
+
     private Vector3[] translationDirectionsPool;
+
+    private static SoundSourceTranslationController instance;
+
+    void Awake() {
+        instance = this;
+    }
 
     void Start()
     {
@@ -286,7 +302,12 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     private GameObject SelectRandomBuilding()
     {
-        return buildingsInCampus[UnityEngine.Random.Range(0, buildingsInCampus.Count)];
+        if (ModeController.TutorialMode) {
+            return ModeController.TutorialBuilding;
+        }
+        else {
+            return buildingsInCampus[UnityEngine.Random.Range(0, buildingsInCampus.Count)];
+        }
     }
 
     public void PositionSoundSource(Vector3 at)
