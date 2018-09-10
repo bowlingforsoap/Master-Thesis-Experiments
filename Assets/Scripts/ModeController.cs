@@ -5,6 +5,8 @@ using UnityEngine;
 public class ModeController : MonoBehaviour
 {
     public GameObject tutorialBuilding;
+	public bool soundCues;
+	public bool minimap;
 
 	public static GameObject TutorialBuilding {
 		get {
@@ -14,6 +16,16 @@ public class ModeController : MonoBehaviour
 	public static bool TutorialMode {
 		get {
 			return instance.tutorialMode;
+		}
+	}
+	public static bool SoundCues {
+		get {
+			return instance.soundCues;
+		}
+	}
+	public static bool Minimap {
+		get {
+			return instance.minimap;
 		}
 	}
 

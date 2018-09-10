@@ -121,14 +121,15 @@ public class SoundSourceTranslationController : MonoBehaviour
         {
             yield return null;
 
-            if (currentTranslationCoroutine == null /* && laserPointer.Ready && voxelDrawer.Ready */)
+            if (currentTranslationCoroutine == null && laserPointer.Ready && voxelDrawer.Ready)
             {
-                /* if (ModeController.TutorialMode) 
-                { */
-                    // yield return new WaitForSeconds(60f);
-                /* }
+                if (ModeController.TutorialMode) 
+                {
+                    yield return new WaitForSeconds(2f);
+                    currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
+                }
                 else
-                { */
+                {
                     float translateBuilding = UnityEngine.Random.Range(0f, 1f);
                     
                     if (translateBuilding < probability8In9 * Time.deltaTime) {
@@ -140,7 +141,7 @@ public class SoundSourceTranslationController : MonoBehaviour
                     }
 
                     yield return null;
-                // }
+                }
 
             }
         }
@@ -163,7 +164,9 @@ public class SoundSourceTranslationController : MonoBehaviour
 
             randomBuilding = SelectRandomBuilding();
             
-            AttachSoundSource(randomBuilding);
+            if (ModeController.SoundCues) {
+                AttachSoundSource(randomBuilding);
+            }
             AttachSphereCollider(randomBuilding);
             soundSource = randomBuilding;
 
@@ -393,14 +396,18 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     private void PlaySound()
     {
-        Debug.Log("#PlaySound");
-        soundSource.transform.GetChild(0).GetComponent<AudioSource>().Play();
+        try {
+            Debug.Log("#PlaySound");
+            soundSource.transform.GetChild(0).GetComponent<AudioSource>().Play();
+        } catch (Exception) { Debug.Log("Couldn't start sound! Possibly, sound cues are turned off."); }
     }
 
     private void StopSound()
     {
-        Debug.Log("#StopSound");
-        soundSource.transform.GetChild(0).GetComponent<AudioSource>().Stop();
+        try {
+            Debug.Log("#StopSound");
+            soundSource.transform.GetChild(0).GetComponent<AudioSource>().Stop();
+        } catch (Exception) { Debug.Log("Couldn't stop sound! Possibly, sound cues are turned off."); }
     }
 
     public void RemoveFromBuildingList(GameObject building) {

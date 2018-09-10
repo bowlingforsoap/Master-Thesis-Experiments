@@ -145,7 +145,10 @@ public class LaserPointer : MonoBehaviour {
 		GameObject building = BuildingForCollider(collider);
 		soundSourceTranslationController.DestroyChildren(building);
 
-		soundSourceTranslationController.RemoveFromBuildingList(building);
+		if (!ModeController.TutorialMode)
+		{
+			soundSourceTranslationController.RemoveFromBuildingList(building);
+		}
 
 		selectionAllowed = true;
 	}
