@@ -34,9 +34,6 @@ public class SoundSourceTranslationController : MonoBehaviour
     // private Vector2[] rectangleCorners = new Vector2[4];
     [SerializeField]
     private List<GameObject> buildingsInCampus;
-
-    private float probability8In9 = Utils.PerSecondProbabilityOfEvents(8, 9 * 60);
-    private float probability8In10 = Utils.PerSecondProbabilityOfEvents(8, 10 * 60);
     private int eventCounter = 0;
 
     public static GameObject[] BuildingsInCampus {
@@ -57,10 +54,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     }
 
     void Start()
-    {
-        Debug.Log("probability8In10: " + probability8In10);
-        Debug.Log("probability8In9: " + probability8In9);
-        
+    {        
         // Find all buildings in campus model
         int modelsInCampus = campus.transform.childCount;
         for (int i = 0; i < modelsInCampus; i++)
@@ -115,8 +109,19 @@ public class SoundSourceTranslationController : MonoBehaviour
         // Debug.Log("Tranlsation Directions' Pool: " + Utils.ArrayToString<Vector3>(translationDirectionsPool));
     }
 
-    public IEnumerator RandomBuildingTranslationLoop()
+    /// <summary>Arguments should be given in seconds.</summary>
+    public IEnumerator RandomBuildingTranslationLoop(float translationLoopDuration, float numEvents, float waitAtTheBeginning)
     {
+
+        int eventNum = 0;
+        if (!ModeController.TutorialMode) {
+            Debug.Log("RandomBuildingTranslationLoop start Time.time: " + Time.time);
+            Debug.Log("RandomBuildingTranslationLoop predicted end Time.time: " + Time.time + translationLoopDuration);            
+            
+            Debug.Log("Waiting for: " + waitAtTheBeginning);
+            yield return new WaitForSeconds(waitAtTheBeginning);
+        }
+
         while (true)
         {
             yield return null;
@@ -130,21 +135,43 @@ public class SoundSourceTranslationController : MonoBehaviour
                 }
                 else
                 {
-                    float translateBuilding = UnityEngine.Random.Range(0f, 1f);
-                    
-                    if (translateBuilding < probability8In9 * Time.deltaTime) {
-                        currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
-
-                        Debug.Log("translateBuilding: " + translateBuilding);
-                        Debug.Log("probability8In9 * Time.deltaTime: " + probability8In9 * Time.deltaTime);
-                        Debug.Log("eventCounter: " + ++eventCounter);
+                    if (eventNum >= numEvents) {
+                        break;
                     }
 
-                    yield return null;
+                    float timePerEvent = (translationLoopDuration - waitAtTheBeginning) / numEvents;
+
+                    // Figure out for how long to wait
+                    float globalBegin = Time.time;
+                    float beginTime, endTime;
+                    float eventLaunchTime = 0; // just to calm compiler down
+                    for (eventNum = 1; eventNum <= numEvents; eventNum++) {
+                        beginTime = Time.time;
+                        endTime = globalBegin + eventNum * timePerEvent;
+
+                        eventLaunchTime = UnityEngine.Random.Range(beginTime, endTime);
+
+                        Debug.Log("Event " + eventNum + " launch time: " + eventLaunchTime + ". Time now: " + Time.time);
+                    
+                        while (Time.time < eventLaunchTime) {
+                            float timeDifference = eventLaunchTime - Time.time;
+                            if (timeDifference > 0) {
+                                Debug.Log("Waiting for: " + timeDifference);
+                                yield return new WaitForSeconds(Mathf.Abs(Time.time - eventLaunchTime));
+                            } else {
+                                break;
+                            }
+                        }
+                    
+                        // Tranlsate the building
+                        currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
+                    }
                 }
 
             }
         }
+
+        Debug.Log("RandomBuildingTranslationLoop end Time.time: " + Time.time);
     }
 
     public IEnumerator RandomlyTranslateRandomBuilding()
