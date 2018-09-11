@@ -16,5 +16,16 @@ public class ModelControllerEditor : Editor {
 		if (GUILayout.Button("Experiment Mode")) {
 			modeController.GoInExperimentMode();
 		}
+
+		GUILayout.Label("Experiment Groups:");
+		if (GUILayout.Button("Minimap Only")) {
+			modeController.GoInMinimapOnlyMode();
+		}
+		if (GUILayout.Button("Sound Only")) {
+			modeController.GoInSoundOnlyMode();
+		}
+		if (GUILayout.Button("Minimap + Sound")) {
+			modeController.GoInMinimapAndSoundMode();
+		}
 	}
 }

@@ -13,8 +13,8 @@ public class MinimapController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (minimap.activeSelf && minimapCompass.activeSelf)
-		{
+		/* if (minimap.activeSelf && minimapCompass.activeSelf)
+		{ */
 			if (ModeController.Minimap) {
 				minimap.SetActive(true);
 				minimapCompass.SetActive(true);
@@ -22,6 +22,6 @@ public class MinimapController : MonoBehaviour {
 				minimap.SetActive(false);
 				minimapCompass.SetActive(false);
 			}
-		}
+		// }
 	}
 }

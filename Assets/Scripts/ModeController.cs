@@ -58,4 +58,20 @@ public class ModeController : MonoBehaviour
 		
 		Utils.SetGameObjectsActive(SoundSourceTranslationController.BuildingsInCampus, true);
     }
+
+	public void GoInMinimapOnlyMode() {
+		Debug.Log("Minimap only mode activated!");
+		minimap = true;
+		soundCues = false;
+	}
+	public void GoInSoundOnlyMode() {
+		Debug.Log("Sound only mode activated!");
+		minimap = false;
+		soundCues = true;
+	}
+	public void GoInMinimapAndSoundMode() {
+		Debug.Log("Minimap + Sound mode activated!");
+		minimap = true;
+		soundCues = true;
+	}
 }
