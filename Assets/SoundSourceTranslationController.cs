@@ -120,7 +120,7 @@ public class SoundSourceTranslationController : MonoBehaviour
 
         if (!ModeController.TutorialMode) {
             StartCoroutine(Utils.Timer(translationLoopDuration));
-            
+
             Debug.Log("RandomBuildingTranslationLoop start Time.time: " + Time.time);
             Debug.Log("RandomBuildingTranslationLoop predicted end Time.time: " + (Time.time + translationLoopDuration));            
             
@@ -203,6 +203,7 @@ public class SoundSourceTranslationController : MonoBehaviour
                 AttachSoundSource(randomBuilding);
             }
             AttachSphereCollider(randomBuilding);
+            OutlineUtils.ChangeOutlineColor(soundSource, 1);
             soundSource = randomBuilding;
 
             from = soundSource.transform.position;
@@ -388,6 +389,8 @@ public class SoundSourceTranslationController : MonoBehaviour
     {
         if (currentTranslationCoroutine != null)
         {
+            OutlineUtils.ChangeOutlineColor(soundSource, 0);
+
             StopCoroutine(currentTranslationCoroutine);
 
             StopSound();
