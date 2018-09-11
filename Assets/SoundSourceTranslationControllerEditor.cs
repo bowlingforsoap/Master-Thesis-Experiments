@@ -14,7 +14,7 @@ public class SoundSourceTranslationControllerEditor : Editor
         SoundSourceTranslationController controller = (SoundSourceTranslationController)target;
 
         if (GUILayout.Button("Begin Experiment")) {
-            controller.StartCoroutine(controller.RandomBuildingTranslationLoop(8 * 60f, 8f, 0f));
+            controller.StartCoroutine(controller.RandomBuildingTranslationLoop(10 * 60f, 8, 1 * 60f));
         }
 
         /* if (GUILayout.Button("Randomly Translate Random Building")) {

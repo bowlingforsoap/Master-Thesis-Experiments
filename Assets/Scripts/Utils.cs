@@ -85,7 +85,20 @@ public class Utils
 		}
 	}
 
-    public static float PerSecondProbabilityOfEvents(int numEvents, int numSeconds) {
-        return numEvents / (float) numSeconds;
-    }
+    public static IEnumerator Timer(float timeSeconds) {
+            Debug.Log("Timer: Starting timer for " + timeSeconds / 60f + " mins...");
+
+            float beginTime = Time.time;
+            float endTime = beginTime + timeSeconds;
+
+            while (true) {
+                float timeDifference = endTime - Time.time;
+                if (timeDifference > 0) {
+                    yield return new WaitForSeconds(timeDifference);
+                } else {
+                    Debug.Log("Timer: " + timeSeconds / 60f + " minutes passed!");
+                    break;
+                }
+            }
+        }
 }

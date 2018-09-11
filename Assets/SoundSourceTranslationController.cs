@@ -15,6 +15,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     public GameObject campus;
     public LayerMask randomBuildingTranslationLayer;
     public LayerMask movingBuildingLayer;
+    public AnimationCurve buildingTranslationTimeRandomVariableCurve;
 
     public GameObject SoundSource
     {
@@ -110,13 +111,18 @@ public class SoundSourceTranslationController : MonoBehaviour
     }
 
     /// <summary>Arguments should be given in seconds.</summary>
-    public IEnumerator RandomBuildingTranslationLoop(float translationLoopDuration, float numEvents, float waitAtTheBeginning)
+    public IEnumerator RandomBuildingTranslationLoop(float translationLoopDuration, int numEvents, float waitAtTheBeginning)
     {
 
-        int eventNum = 0;
+        int eventNum = 1;
+        float globalBegin = Time.time;
+        float timePerEvent = (translationLoopDuration - waitAtTheBeginning) / numEvents;
+
         if (!ModeController.TutorialMode) {
+            StartCoroutine(Utils.Timer(translationLoopDuration));
+            
             Debug.Log("RandomBuildingTranslationLoop start Time.time: " + Time.time);
-            Debug.Log("RandomBuildingTranslationLoop predicted end Time.time: " + Time.time + translationLoopDuration);            
+            Debug.Log("RandomBuildingTranslationLoop predicted end Time.time: " + (Time.time + translationLoopDuration));            
             
             Debug.Log("Waiting for: " + waitAtTheBeginning);
             yield return new WaitForSeconds(waitAtTheBeginning);
@@ -135,28 +141,27 @@ public class SoundSourceTranslationController : MonoBehaviour
                 }
                 else
                 {
-                    if (eventNum >= numEvents) {
+                    if (eventNum > numEvents) {
                         break;
                     }
 
-                    float timePerEvent = (translationLoopDuration - waitAtTheBeginning) / numEvents;
 
                     // Figure out for how long to wait
-                    float globalBegin = Time.time;
                     float beginTime, endTime;
                     float eventLaunchTime = 0; // just to calm compiler down
-                    for (eventNum = 1; eventNum <= numEvents; eventNum++) {
+                    for ( ; eventNum <= numEvents; ) {
                         beginTime = Time.time;
-                        endTime = globalBegin + eventNum * timePerEvent;
+                        endTime = globalBegin + waitAtTheBeginning + eventNum * timePerEvent;
 
-                        eventLaunchTime = UnityEngine.Random.Range(beginTime, endTime);
+                        float randWeight = buildingTranslationTimeRandomVariableCurve.Evaluate(UnityEngine.Random.value);
+                        eventLaunchTime = beginTime + (endTime - beginTime) * randWeight;//UnityEngine.Random.Range(beginTime, endTime);
 
-                        Debug.Log("Event " + eventNum + " launch time: " + eventLaunchTime + ". Time now: " + Time.time);
+                        Debug.Log("Event " + eventNum + " launch time: " + eventLaunchTime + ". Time.time: " + Time.time);
                     
                         while (Time.time < eventLaunchTime) {
                             float timeDifference = eventLaunchTime - Time.time;
                             if (timeDifference > 0) {
-                                Debug.Log("Waiting for: " + timeDifference);
+                                Debug.Log("Waiting for (eventLaunchTime - Time.time): " + timeDifference);
                                 yield return new WaitForSeconds(Mathf.Abs(Time.time - eventLaunchTime));
                             } else {
                                 break;
@@ -165,6 +170,9 @@ public class SoundSourceTranslationController : MonoBehaviour
                     
                         // Tranlsate the building
                         currentTranslationCoroutine = StartCoroutine(RandomlyTranslateRandomBuilding());
+
+                        eventNum++;
+                        break;
                     }
                 }
 
