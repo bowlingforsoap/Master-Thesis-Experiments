@@ -28,6 +28,11 @@ public class RuntimeObjExporterEditor : Editor
         {
             ObjExporter.DoExportWOSubmeshes();
         }
+
+        GUILayout.Label("Remove:");
+        if (GUILayout.Button("!!! Delete Voxel Drawing !!!")) {
+            VoxelDrawing.VoxelDrawer.GetVoxelDrawer().EraseAllVoxels();
+        }
     }
 
     // Adapted from Source: https://gist.github.com/MattRix/0522c27ee44c0fbbdf76d65de123eeff Author: Matt Rix	
