@@ -118,7 +118,7 @@ public class LaserPointer : MonoBehaviour {
 	private void ShowLaser()
     {
         laser.SetActive(true);
-        laserTransform.position = Vector3.Lerp(trackedObj.transform.position, hitPoint, .5f); // Place the laser in the middle between the controller and the hitPoint
+        laserTransform.position = Vector3.Lerp(trackedObj.transform.position - trackedObj.transform.up * .025f + trackedObj.transform.forward * .07f, hitPoint, .5f); // Place the laser in the middle between the controller and the hitPoint
         laserTransform.LookAt(hitPoint);
         laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y, hitDistance);
     }
