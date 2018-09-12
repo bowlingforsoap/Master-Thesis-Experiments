@@ -12,6 +12,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     public Transform leftFront, rightFront, leftBack, rightBack;//, left, right, front, back;
     public GameObject soundSourcePrefab;
     public GameObject buildingColliderPrefab;
+    public GameObject guessIndicatorPolePrefab;
     public GameObject campus;
     public LayerMask randomBuildingTranslationLayer;
     public LayerMask movingBuildingLayer;
@@ -331,6 +332,11 @@ public class SoundSourceTranslationController : MonoBehaviour
         {
             t.gameObject.layer = layerMaskEditor;
         }
+    }
+
+    public void AttachGuessIndicatorPole(GameObject randomBuilding, float yDisplacement) {
+        Bounds randomBuildingRenderBounds = GetGameObjectRenderBounds(randomBuilding);
+        Instantiate(guessIndicatorPolePrefab, randomBuildingRenderBounds.center + randomBuilding.transform.up * (yDisplacement + 2f) + guessIndicatorPolePrefab.transform.localPosition, Quaternion.identity, randomBuilding.transform);
     }
 
     public void DestroyChildren(GameObject randomBuilding)

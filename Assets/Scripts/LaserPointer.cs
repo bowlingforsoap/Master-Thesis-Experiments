@@ -134,6 +134,8 @@ public class LaserPointer : MonoBehaviour {
 		meshRenderer.material = guessIndicatorMaterial;
 		meshRenderer.enabled = true;
 
+        soundSourceTranslationController.AttachGuessIndicatorPole(collider.transform.parent.parent.gameObject, collider.transform.parent.localScale.x);
+
 		selectionAllowed = false;
 		
 		yield return new WaitForSeconds(1f);
