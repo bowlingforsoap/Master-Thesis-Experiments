@@ -16,6 +16,11 @@ public class SoundSourceTranslationController : MonoBehaviour
     public LayerMask randomBuildingTranslationLayer;
     public LayerMask movingBuildingLayer;
     public AnimationCurve buildingTranslationTimeRandomVariableCurve;
+    [Tooltip("In seconds.")]
+    public float translationLoopDuration;
+    public int numEvents;
+    [Tooltip("In seconds.")]
+    public float waitAtTheBeginning;
 
     public GameObject SoundSource
     {
@@ -111,7 +116,7 @@ public class SoundSourceTranslationController : MonoBehaviour
     }
 
     /// <summary>Arguments should be given in seconds.</summary>
-    public IEnumerator RandomBuildingTranslationLoop(float translationLoopDuration, int numEvents, float waitAtTheBeginning)
+    public IEnumerator RandomBuildingTranslationLoop(/* float translationLoopDuration, int numEvents, float waitAtTheBeginning */)
     {
 
         int eventNum = 1;
@@ -198,17 +203,10 @@ public class SoundSourceTranslationController : MonoBehaviour
             }
 
             randomBuilding = SelectRandomBuilding();
-            
-            if (ModeController.SoundCues) {
-                AttachSoundSource(randomBuilding);
-            }
-            AttachSphereCollider(randomBuilding);
-            OutlineUtils.ChangeOutlineColor(soundSource, 1);
-            soundSource = randomBuilding;
 
-            from = soundSource.transform.position;
+            from = randomBuilding.transform.position;
 
-            actualBuildingCenter = GetGameObjectCenterInScene(soundSource);
+            actualBuildingCenter = GetGameObjectCenterInScene(randomBuilding);
             
             randTranslationDestination = ChooseRandomTranslationDestination(actualBuildingCenter, randomBuildingTranslationLayer);
             
@@ -220,13 +218,21 @@ public class SoundSourceTranslationController : MonoBehaviour
             }
             
             // Adjust for incorrect origins the buildings in the Campus model have
-            to = randTranslationDestination.Value + from - GetGameObjectCenterInScene(soundSource); // rectangleCorners -> ComputeRandomTranslation(from)
+            to = randTranslationDestination.Value + from - GetGameObjectCenterInScene(randomBuilding); // rectangleCorners -> ComputeRandomTranslation(from)
             
             yield return null;
         } while (/* randTranslationDestination == null || */ Vector3.Distance(to, from) < 150f); // || Vector3.Distance(to, from) > 160f);
 
         Debug.DrawRay(actualBuildingCenter, randTranslationDestination.Value - actualBuildingCenter, Color.red, 5f);
+        
+        if (ModeController.SoundCues) {
+            AttachSoundSource(randomBuilding);
+        }
+        AttachSphereCollider(randomBuilding);
+        soundSource = randomBuilding;
 
+        OutlineUtils.ChangeOutlineColor(soundSource, 1);
+        
         StartTranslateSoundSource(from, to);
     }
 
