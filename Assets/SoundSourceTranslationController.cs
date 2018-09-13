@@ -389,6 +389,9 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     public void StartTranslateSoundSource(Vector3 from, Vector3 to)
     {
+        DataCollector.StoreNewTranslation();
+        DataCollector.StoreTranlationStartTime(Time.time);
+
         currentTranslationCoroutine = StartCoroutine(TranslateSoundSourceCoroutine(from, to));
     }
 
@@ -399,6 +402,8 @@ public class SoundSourceTranslationController : MonoBehaviour
 
     public void StopTranslation(bool destroyChildren)
     {
+        DataCollector.LogDataEntry();
+
         if (currentTranslationCoroutine != null)
         {
             OutlineUtils.ChangeOutlineColor(soundSource, 0);

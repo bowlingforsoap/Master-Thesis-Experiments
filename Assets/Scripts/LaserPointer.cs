@@ -76,11 +76,9 @@ public class LaserPointer : MonoBehaviour {
 				{
 					if (hitSomething)
 					{
-						// Store correct guess
-						// ...
+						DataCollector.StoreGuessTime(Time.time);	
 
 						StartCoroutine(IndicateCorrectGuess(hit.collider.gameObject));
-						
 					}
 					else
 					{

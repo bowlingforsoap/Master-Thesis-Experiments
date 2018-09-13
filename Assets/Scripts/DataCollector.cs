@@ -7,8 +7,8 @@ using System;
 
 public class DataCollector : MonoBehaviour
 {
-	private static DataCollector instance;
-	[SerializeField]
+    private static DataCollector instance;
+    [SerializeField]
 
     public string filePath;
 
@@ -18,20 +18,22 @@ public class DataCollector : MonoBehaviour
     private static StreamWriter streamWriter;
 
     // private StringBuilder stringBuilder = new StringBuilder();
-    private const string EXT = ".csv"; 
+    private const string EXT = ".csv";
 
     private static Data data;
 
     void Start()
     {
-		instance = this;
+        instance = this;
 
         // Open streams
         int count = 1;
-        while (true) {
+        while (true)
+        {
             string completeFileName = filePath + count + EXT;
 
-            if (System.IO.File.Exists(completeFileName)) {
+            if (System.IO.File.Exists(completeFileName))
+            {
                 count++;
                 continue;
             }
@@ -43,22 +45,32 @@ public class DataCollector : MonoBehaviour
         streamWriter.WriteLine("Translation id,Reaction time,Group");
     }
 
-    public static void StoreNewTranslation() {
+    public static void StoreNewTranslation()
+    {
         data = new Data();
         data.SetTranslationId(DateTime.Now);
+        data.SetGroup(ModeController.SoundCues, ModeController.Minimap);
+        Debug.Log("Translation id: " + data.TranslationId);
+        Debug.Log("Group: " + data.Group);
     }
 
-    public static void StoreTranlationStartTime(float time) {
+    public static void StoreTranlationStartTime(float time)
+    {
+        Debug.Log("Translation start time: " + time);
         data.SetTranlsationStartTime(time);
     }
 
-    public static void StoreGuessTime(float time) {
+    public static void StoreGuessTime(float time)
+    {
+        Debug.Log("Guess time: " + time);
         data.SetGuessTime(time);
     }
 
+    /// <summary>Saves Data to file.</summary>
     public static void LogDataEntry()
     {
         string dataString = data.ToString();
+        Debug.Log("Logging data entry: " + dataString);
 
         streamWriter.WriteLine(dataString);
         streamWriter.Flush();
@@ -66,62 +78,82 @@ public class DataCollector : MonoBehaviour
         instance.entriesInFile++;
     }
 
-    
 
-    private  void CloseStreamWriter()
+
+    private void CloseStreamWriter()
     {
-        if (streamWriter != null) {
+        if (streamWriter != null)
+        {
             streamWriter.Close();
         }
     }
 
-	// Close streams
+    // Close streams
     void OnApplicationQuit()
     {
         CloseStreamWriter();
     }
 
-    public class Data {
+    public class Data
+    {
         private string tranlsationId;
         private float translationStartTime;
         private float guessTime;
         private int group;
 
-        private float ReactionTime {
-            get {
+        private float ReactionTime
+        {
+            get
+            {
                 return guessTime - translationStartTime;
             }
         }
 
-        public void SetTranslationId(DateTime now) {
+        public string TranslationId
+        {
+            get { return tranlsationId; }
+        }
+        public int Group {
+            get { return group; }
+        }
+
+        public void SetTranslationId(DateTime now)
+        {
             tranlsationId = now.ToString("yyyyMMddHHmmssffff");
         }
 
-        public void SetTranlsationStartTime(float time) {
+        public void SetTranlsationStartTime(float time)
+        {
             translationStartTime = time;
             guessTime = time; // if the difference is 0, we interpret it as no correct guess
         }
 
-        public void SetGuessTime(float time) {
+        public void SetGuessTime(float time)
+        {
             guessTime = time;
         }
 
-        public void SetGroup(bool soundCues, bool minimap) {
-            if (soundCues && minimap) {
+        public void SetGroup(bool soundCues, bool minimap)
+        {
+            if (soundCues && minimap)
+            {
                 group = 1;
             }
 
-            if (soundCues && !minimap) {
+            if (soundCues && !minimap)
+            {
                 group = 2;
             }
 
-            if (!soundCues && minimap) {
+            if (!soundCues && minimap)
+            {
                 group = 3;
             }
         }
 
 
-        public string ToString() {
+        public override string ToString()
+        {
             return tranlsationId + "," + ReactionTime + "," + group;
         }
     }
