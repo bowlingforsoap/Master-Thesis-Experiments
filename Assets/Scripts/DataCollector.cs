@@ -26,23 +26,14 @@ public class DataCollector : MonoBehaviour
     {
         instance = this;
 
-        // Open streams
-        int count = 1;
-        while (true)
+        string completeFileName = filePath + EXT;
+        if (System.IO.File.Exists(completeFileName))
         {
-            string completeFileName = filePath + count + EXT;
-
-            if (System.IO.File.Exists(completeFileName))
-            {
-                count++;
-                continue;
-            }
-
+            streamWriter = new StreamWriter(completeFileName, true);
+        } else {
             streamWriter = new StreamWriter(completeFileName, false);
-            break;
+            streamWriter.WriteLine("Translation id,Reaction time,Group");
         }
-
-        streamWriter.WriteLine("Translation id,Reaction time,Group");
     }
 
     public static void StoreNewTranslation()

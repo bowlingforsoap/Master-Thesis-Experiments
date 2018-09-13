@@ -142,12 +142,17 @@ public class LaserPointer : MonoBehaviour {
 			meshRenderer.enabled = false;
 		}
 
-		GameObject building = BuildingForCollider(collider);
-		soundSourceTranslationController.DestroyChildren(building);
+		try {
+			GameObject building = BuildingForCollider(collider);
+			soundSourceTranslationController.DestroyChildren(building);
 
-		if (!ModeController.TutorialMode)
-		{
-			soundSourceTranslationController.RemoveFromBuildingList(building);
+			if (!ModeController.TutorialMode)
+			{
+				soundSourceTranslationController.RemoveFromBuildingList(building);
+			}
+		} catch (MissingReferenceException e) {
+			Debug.Log("!!!ERROR!!!");
+			Debug.LogError(e.Message);
 		}
 
 		selectionAllowed = true;
