@@ -60,6 +60,10 @@ public class DataCollector : MonoBehaviour
     /// <summary>Saves Data to file.</summary>
     public static void LogDataEntry()
     {
+        if (ModeController.TutorialMode) {
+            return;
+        }
+
         string dataString = data.ToString();
         Debug.Log("Logging data entry: " + dataString);
 
