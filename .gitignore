@@ -34,7 +34,7 @@ sysinfo.txt
 *.unitypackage
 
 # CSV
-*.csv*
+#*.csv*
 
 # VSCode
 .vscode/*

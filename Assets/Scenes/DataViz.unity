@@ -1434,6 +1434,10 @@ MonoBehaviour:
   - Assets/Resources/actualTranslationsAndGuesses14.csv
   - Assets/Resources/actualTranslationsAndGuesses16.csv
   - Assets/Resources/actualTranslationsAndGuesses20.csv
+  - Assets/Resources/actualTranslationsAndGuesses22.csv
+  - Assets/Resources/actualTranslationsAndGuesses24.csv
+  - Assets/Resources/actualTranslationsAndGuesses26.csv
+  - Assets/Resources/actualTranslationsAndGuesses29.csv
 --- !u!4 &1408798430
 Transform:
   m_ObjectHideFlags: 0
@@ -1460,7 +1464,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathLineRendererPrefab: {fileID: 1753036996680892, guid: 2ee94ab894e1ead42b0cb55908ec1e4c,
     type: 2}
-  meanLineRendererPrefab: {fileID: 0}
   guessLineRendererPrefab: {fileID: 1753036996680892, guid: 3a2767970ad7c3340a1b777f4826fe3b,
     type: 2}
   pathPointPrefab: {fileID: 1147958098764818, guid: d9643b772dd6ee44bbedf954b8f4a494,
